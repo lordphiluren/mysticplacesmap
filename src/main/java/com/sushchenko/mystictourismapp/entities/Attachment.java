@@ -1,2 +1,5 @@
-package com.sushchenko.mystictourismapp.entities;public class Attachment {
+package com.sushchenko.mystictourismapp.entities;
+
+public class Attachment {
+    private String url;
 }

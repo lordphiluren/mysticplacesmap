@@ -1,4 +1,4 @@
-package com.lordphiluren.financetracker.utils.exceptions;
+package com.sushchenko.mystictourismapp.utils.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

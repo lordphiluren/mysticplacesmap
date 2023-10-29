@@ -1,2 +1,5 @@
-package com.sushchenko.mystictourismapp.entities;public class Tag {
+package com.sushchenko.mystictourismapp.entities;
+
+public class Tag {
+    private String name;
 }

@@ -1,2 +1,5 @@
-package com.sushchenko.mystictourismapp.entities.enums;public enum Status {
+package com.sushchenko.mystictourismapp.entities.enums;
+
+public enum Status {
+    Confirmed, Unconfirmed
 }

@@ -1,5 +1,5 @@
-package com.sushchenko.mystictourismapp.entities;
+package com.sushchenko.mystictourismapp.entities.enums;
 
 public enum Role {
-    ADMIN, USER
+    ROLE_ADMIN, ROLE_USER
 }
