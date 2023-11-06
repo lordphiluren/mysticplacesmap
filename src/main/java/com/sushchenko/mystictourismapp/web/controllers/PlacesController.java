@@ -37,12 +37,13 @@ public class PlacesController {
     public ResponseEntity<?> addPlace(@RequestPart PlaceDTO placeDTO,
                                       @RequestPart MultipartFile[] files) throws IOException {
         // Save received files to image directory and set attach property to URIs of the created files
-        String path = fileService.createDirectory(placeDTO.getName());
-        List<String> fileUrls = fileService.saveFiles(files, path);
-        placeDTO.setAttachments(fileUrls.stream() // TODO: maybe need refactoring
-                .map(url -> new Attachment(url, new Date()))
-                .collect(Collectors.toList()));
-
+        if(files.length == 0) {
+            String path = fileService.createDirectory(placeDTO.getName());
+            List<String> fileUrls = fileService.saveFiles(files, path);
+            placeDTO.setAttachments(fileUrls.stream() // TODO: maybe need refactoring
+                    .map(url -> new Attachment(url, new Date()))
+                    .collect(Collectors.toList()));
+        }
         placeService.add(modelMapper.map(placeDTO, Place.class));
         return ResponseEntity.ok("Place successfully added");
     }
