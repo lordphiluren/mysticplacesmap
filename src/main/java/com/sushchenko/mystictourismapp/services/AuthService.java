@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class AuthService {
                 .token(token)
                 .build();
     }
-
+    @Transactional
     public void signUp(User user) {
         user.setRole(Role.ROLE_USER);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

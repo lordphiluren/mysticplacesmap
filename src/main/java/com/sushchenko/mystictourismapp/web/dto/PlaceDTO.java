@@ -1,19 +1,17 @@
-package com.sushchenko.mystictourismapp.entities;
+package com.sushchenko.mystictourismapp.web.dto;
 
+import com.sushchenko.mystictourismapp.entities.Attachment;
+import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.enums.Status;
-import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "places")
-public class Place {
-    @Id
+public class PlaceDTO {
     private String id;
     private String name;
     private String shortDescription;
@@ -22,7 +20,6 @@ public class Place {
     private String address;
     private double latitude;
     private double longitude;
-    private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;
     private List<Comment> comments;
