@@ -6,8 +6,10 @@ import com.sushchenko.mystictourismapp.entities.enums.Status;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class PlaceDTO {
     private Set<String> tags;
     private List<Attachment> attachments;
     private List<Comment> comments;
+
 }
