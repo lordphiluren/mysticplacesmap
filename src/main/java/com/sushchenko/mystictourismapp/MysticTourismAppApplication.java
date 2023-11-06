@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp;
 
+import com.ibm.icu.text.Transliterator;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,8 @@ public class MysticTourismAppApplication {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
+	@Bean
+	public Transliterator transliterator() { return Transliterator.getInstance("Russian-Latin/BGN");}
 	public static void main(String[] args) {
 		SpringApplication.run(MysticTourismAppApplication.class, args);
 	}
