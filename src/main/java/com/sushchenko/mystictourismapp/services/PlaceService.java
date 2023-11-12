@@ -31,7 +31,7 @@ public class PlaceService {
     @Transactional
     public Place getById(String id) {
         return placeRepo.findById(id)
-                .orElseThrow(()-> new PlaceNotFoundException("Place with" + id + " doesn't exist"));
+                .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
 
 }
