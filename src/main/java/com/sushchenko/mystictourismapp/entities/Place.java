@@ -16,12 +16,12 @@ public class Place {
     @Id
     private String id;
     private String name;
+    private String creator;
     private String shortDescription;
     private String fullDescription;
     private String howToGet;
     private String address;
-    private double latitude;
-    private double longitude;
+    private Coordinates coordinates;
     private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;

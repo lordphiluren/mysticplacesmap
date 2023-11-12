@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class PlaceDTO {
     private String id;
     private String name;
+    private String creator;
     private String shortDescription;
     private String fullDescription;
     private String howToGet;
