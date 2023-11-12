@@ -5,6 +5,8 @@ import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.util.Date;
 
@@ -15,5 +17,12 @@ public class Comment {
     private String text;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    private User creator;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String creator;
+
+    public Comment(String text, String creator) {
+        this.text = text;
+        this.creator = creator;
+        this.createdAt = new Date();
+    }
 }

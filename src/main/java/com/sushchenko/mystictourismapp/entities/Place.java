@@ -24,7 +24,7 @@ public class Place {
     private String fullDescription;
     private String howToGet;
     private String address;
-    private Coordinates coordinates;
+    private Location location;
     private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;
