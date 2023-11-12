@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.services;
 
+import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.entities.enums.Status;
 import com.sushchenko.mystictourismapp.repos.PlaceRepo;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,5 +37,12 @@ public class PlaceService {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
-
+    @Transactional
+    public void addComment(String placeId, Comment comment) {
+        Place place = getById(placeId);
+        comment.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
+        comment.setCreatedAt(new Date());
+        place.getComments().add(comment);
+        placeRepo.save(place);
+    }
 }

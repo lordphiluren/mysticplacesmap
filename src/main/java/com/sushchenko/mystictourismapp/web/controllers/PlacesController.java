@@ -1,11 +1,13 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
 import com.sushchenko.mystictourismapp.entities.Attachment;
+import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.services.FileService;
 import com.sushchenko.mystictourismapp.services.PlaceService;
+import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
 import com.sushchenko.mystictourismapp.web.dto.PlaceDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -44,6 +46,12 @@ public class PlacesController {
         return mapToPlaceDto(placeService.getById(id));
     }
 
+    @PostMapping("/{id}")
+    public ResponseEntity<?> addCommentToPlace(@PathVariable String id, @RequestBody CommentDTO commentDto) {
+        placeService.addComment(id, mapToComment(commentDto));
+        return ResponseEntity.ok("Comment successfully added");
+    }
+
     @GetMapping()
     // TODO: убрать создание файла, если было выкинуто исключение от уникального индекса в бд
     @RequestMapping(path = "", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -69,5 +77,8 @@ public class PlacesController {
     }
     private Place mapToPlace(PlaceDTO placeDTO) {
         return modelMapper.map(placeDTO, Place.class);
+    }
+    private Comment mapToComment(CommentDTO commentDTO) {
+        return modelMapper.map(commentDTO, Comment.class);
     }
 }
