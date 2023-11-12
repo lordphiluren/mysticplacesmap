@@ -4,6 +4,8 @@ import com.sushchenko.mystictourismapp.entities.enums.Status;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.geo.GeoJson;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -24,7 +26,7 @@ public class Place {
     private String fullDescription;
     private String howToGet;
     private String address;
-    private Location location;
+    private GeoJsonPoint location;
     private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;
