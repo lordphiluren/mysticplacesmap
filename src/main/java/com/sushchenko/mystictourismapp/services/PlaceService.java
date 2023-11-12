@@ -3,6 +3,8 @@ package com.sushchenko.mystictourismapp.services;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.entities.enums.Status;
 import com.sushchenko.mystictourismapp.repos.PlaceRepo;
+import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
+import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.utils.exceptions.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
+    private final AuthenticationFacade authFacade;
     private final PlaceRepo placeRepo;
 
     @Transactional
     public void add(Place place) {
+        place.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
         place.setStatus(Status.UNCONFIRMED);
         placeRepo.save(place);
     }
