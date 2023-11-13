@@ -37,6 +37,10 @@ public class PlaceService {
         return placeRepo.findAll();
     }
     @Transactional
+    public List<Place> getAllByTags(List<String> tags) {
+        return placeRepo.findByTagsIn(tags);
+    }
+    @Transactional
     public Place getById(String id) {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));

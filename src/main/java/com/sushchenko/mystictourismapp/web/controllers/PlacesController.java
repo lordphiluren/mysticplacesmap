@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.entities.Attachment;
 import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,11 +35,20 @@ public class PlacesController {
     private final PlaceMapper placeMapper;
     private final CommentService commentService;
     @GetMapping()
-    public List<PlaceDTO> getPlaces() {
-       return placeService.getAll()
-               .stream()
-               .map(placeMapper::mapToPlaceDTO)
-               .collect(Collectors.toList());
+    public List<PlaceDTO> getPlaces(@RequestParam(name = "tags", required = false) List<String> tags) {
+
+        if(tags.isEmpty()) {
+            return placeService.getAll()
+                    .stream()
+                    .map(placeMapper::mapToPlaceDTO)
+                    .collect(Collectors.toList());
+       }
+       else {
+            return placeService.getAllByTags(tags)
+                    .stream()
+                    .map(placeMapper::mapToPlaceDTO)
+                    .collect(Collectors.toList());
+       }
     }
     @GetMapping("/{id}")
     public PlaceDTO getPlaceById(@PathVariable String id) {

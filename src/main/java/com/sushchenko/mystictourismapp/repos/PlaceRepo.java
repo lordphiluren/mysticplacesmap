@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface PlaceRepo extends MongoRepository<Place, String> {
-
+    List<Place> findByTagsIn(List<String> tags);
 }
