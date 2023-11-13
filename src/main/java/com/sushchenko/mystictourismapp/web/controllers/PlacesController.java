@@ -37,14 +37,19 @@ public class PlacesController {
                .collect(Collectors.toList());
     }
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPlaceById(@PathVariable String id) {
+    public PlaceDTO getPlaceById(@PathVariable String id) {
         PlaceDTO placeDTO = placeMapper.mapToPlaceDTO(placeService.getById(id));
         List<CommentDTO> comments = commentService.getCommentsByPlaceId(id)
                 .stream()
                 .map(commentMapper::mapToCommentDTO)
                 .toList();
           placeDTO.setComments(comments);
-        return ResponseEntity.ok(placeDTO);
+        return placeDTO;
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<?> addRating(@PathVariable String id, @RequestBody PlaceDTO placeDTO) {
+        placeService.addRatesById(id, placeDTO.getRating());
+        return ResponseEntity.ok("Rating added");
     }
     @RequestMapping(path = "", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addPlace(@RequestPart PlaceDTO placeDTO,

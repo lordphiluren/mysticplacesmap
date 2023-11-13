@@ -32,13 +32,6 @@ public class PlaceService {
         placeRepo.save(place);
     }
     @Transactional
-    public void addRatesById(String id, double rate) {
-        Place place = getById(id);
-        place.getRates().add(rate);
-        place.setRating(countPlaceRating(place));
-    }
-
-    @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll();
     }
@@ -51,6 +44,15 @@ public class PlaceService {
     private double countPlaceRating(Place place) {
         List<Double> rates = place.getRates();
         return rates.stream().mapToDouble(Double::doubleValue).sum() / rates.size();
+    }
+    @Transactional
+    public void addRatesById(String id, double rate) {
+        Place place = getById(id);
+        List<Double> rates = place.getRates();
+        rates.add(rate);
+        place.setRates(rates);
+        place.setRating(countPlaceRating(place));
+        placeRepo.save(place);
     }
     public Place addPlaceAttachments(Place place, MultipartFile[] files) {
         // Save received files to image directory and set attach property to URLs of the created files
