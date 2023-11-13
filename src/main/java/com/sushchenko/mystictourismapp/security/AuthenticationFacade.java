@@ -10,6 +10,4 @@ public class AuthenticationFacade implements IAuthenticationFacade{
     public UserPrincipal getAuthenticationPrincipal() {
         return (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-
-
 }
