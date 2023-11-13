@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 public class PathProperties {
-    @Value("${application.places.attachments.path}")
+    @Value("${application.attachments.places.path}")
     private String placeAttachmentsPath;
-    @Value("${application.comments.attachments.path}")
+    @Value("${application.attachments.comments.path}")
     private String commentAttachmentsPath;
-    @Value("${application.user.attachments.path}")
+    @Value("${application.attachments.user.path}")
     private String userAttachmentsPath;
 }

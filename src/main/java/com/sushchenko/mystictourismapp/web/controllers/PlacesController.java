@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @RequestMapping("/api/places")
@@ -72,6 +73,17 @@ public class PlacesController {
         comment.setPlaceId(id);
         commentService.addComment(commentService.addCommentAttachments(comment, files));
         return ResponseEntity.ok("Comment successfully added");
+    }
+    @RequestMapping(path = "/{id}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updatePlace(@PathVariable String id,
+                                         @RequestPart PlaceDTO placeDTO,
+                                         @RequestPart MultipartFile[] files) {
+        Place place = placeMapper.mapToPlace(placeDTO);
+        placeService.deletePlaceAttachments(placeService.getById(id));
+        place.setId(id);
+        place.setCreator(placeDTO.getCreator().getId());
+        placeService.updatePlace(placeService.addPlaceAttachments(place, files));
+        return ResponseEntity.ok("Place successfully updated");
     }
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {

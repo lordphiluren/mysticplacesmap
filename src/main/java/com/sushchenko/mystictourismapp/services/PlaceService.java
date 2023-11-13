@@ -68,8 +68,15 @@ public class PlaceService {
     }
     @Transactional
     public void deletePlace(Place place) {
-        place.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
+        deletePlaceAttachments(place);
         commentService.deleteCommentsByPlaceId(place.getId());
         placeRepo.delete(place);
+    }
+    public void deletePlaceAttachments(Place place) {
+        place.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
+    }
+    @Transactional
+    public void updatePlace(Place place) {
+        placeRepo.save(place);
     }
 }
