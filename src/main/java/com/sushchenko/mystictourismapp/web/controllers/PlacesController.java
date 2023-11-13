@@ -36,7 +36,7 @@ public class PlacesController {
                .map(placeMapper::mapToPlaceDTO)
                .collect(Collectors.toList());
     }
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{id}")
     public PlaceDTO getPlaceById(@PathVariable String id) {
         PlaceDTO placeDTO = placeMapper.mapToPlaceDTO(placeService.getById(id));
         List<CommentDTO> comments = commentService.getCommentsByPlaceId(id)

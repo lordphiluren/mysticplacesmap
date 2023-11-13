@@ -32,6 +32,16 @@ public class FileManager {
         }
         return fileUrls;
     }
+    public String saveFile(MultipartFile file, String path) {
+        String fileUrl;
+        try {
+                file.transferTo(new File(path + File.separator + file.getOriginalFilename()));
+                fileUrl = path + File.separator + file.getOriginalFilename();
+        } catch (IOException e) {
+            throw new FilesNotSavedException(e.getMessage());
+        }
+        return fileUrl;
+    }
     public String createPlacesDirectory(String name) {
         String engName = transliterator.transliterate(name);
         File dir = new File(paths.getPlaceAttachmentsPath() + engName);

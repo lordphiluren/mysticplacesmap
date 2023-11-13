@@ -25,6 +25,7 @@ public class User {
     private String lastName;
     @Email(message = "Email should be valid")
     private String email;
+    private Attachment profilePicture;
     @NotNull(message = "Role cannot be null")
     private Role role;
 }

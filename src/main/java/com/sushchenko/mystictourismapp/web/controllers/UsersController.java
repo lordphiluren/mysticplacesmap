@@ -1,13 +1,18 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
+import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.services.UserService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mappers.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @RequestMapping("/api/users")
@@ -16,9 +21,18 @@ public class UsersController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @GetMapping("")
-    public UserDTO getUserInfo() {
-        return userMapper.mapToUserDTO(userService.getLoggedUserInfo());
+    @GetMapping("/{username}")
+    public UserDTO getUserInfo(@PathVariable String username) {
+        return userMapper.mapToUserDTO(userService.getByUsername(username));
+    }
+    @RequestMapping(path = "/{username}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updateUserInfo(@PathVariable String username,
+                                            @RequestPart UserDTO userDTO,
+                                            @RequestPart MultipartFile file) {
+        User user = userMapper.mapToUser(userDTO);
+        user.setId(userService.getByUsername(username).getId());
+        userService.update(userService.addUserProfilePicture(user, file));
+        return ResponseEntity.ok("User info successfully updated");
     }
 
     @ExceptionHandler
