@@ -38,6 +38,11 @@ public class CommentsController {
         return ResponseEntity.ok("Comment successfully added");
     }
 
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable String commentId) {
+        commentService.deleteComment(commentService.getById(commentId));
+        return ResponseEntity.ok("Comment Successfully deleted");
+    }
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
         ControllerErrorResponse errorResponse = new ControllerErrorResponse(

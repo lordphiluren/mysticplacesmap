@@ -16,6 +16,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommentDTO {
+    private String id;
     private String text;
     @Field(targetType = FieldType.OBJECT_ID)
     private UserDTO creator;

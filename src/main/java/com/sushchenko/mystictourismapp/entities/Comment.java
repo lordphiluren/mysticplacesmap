@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.entities;
 
+import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @Document(collection = "comments")
 public class Comment {
+    @Id
+    private String id;
     private String text;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;

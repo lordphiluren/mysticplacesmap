@@ -7,6 +7,7 @@ import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.repos.CommentRepo;
 import com.sushchenko.mystictourismapp.repos.PlaceRepo;
 import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
+import com.sushchenko.mystictourismapp.utils.exceptions.CommentNotFoundException;
 import com.sushchenko.mystictourismapp.utils.filemanager.FileManager;
 import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
 import com.sushchenko.mystictourismapp.web.dto.UserDTO;
@@ -33,6 +34,11 @@ public class CommentService {
         comment.setCreatedAt(new Date());
         commentRepo.save(comment);
     }
+    @Transactional
+    public Comment getById(String id) {
+        return commentRepo.findById(id)
+                .orElseThrow(() -> new CommentNotFoundException("Comment with id: " + id + " not found"));
+    }
 
     public Comment addCommentAttachments(Comment comment, MultipartFile[] files) {
         if(files.length != 0) {
@@ -43,6 +49,10 @@ public class CommentService {
                     .collect(Collectors.toList()));
         }
         return comment;
+    }
+    @Transactional
+    public void deleteComment(Comment comment) {
+        commentRepo.delete(comment);
     }
     @Transactional
     public List<Comment> getCommentsByPlaceId(String placeId) {
