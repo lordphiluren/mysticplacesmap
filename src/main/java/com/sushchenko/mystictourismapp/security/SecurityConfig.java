@@ -35,6 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                .logout(l -> l
+                        .logoutSuccessUrl("/").permitAll()
                 );
 
         return http.build();
