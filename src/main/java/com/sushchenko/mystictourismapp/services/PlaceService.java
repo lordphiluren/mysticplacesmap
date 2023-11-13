@@ -22,6 +22,7 @@ public class PlaceService {
     private final AuthenticationFacade authFacade;
     private final PlaceRepo placeRepo;
     private final FileManager fileManager;
+    private final CommentService commentService;
 
     @Transactional
     public void add(Place place) {
@@ -65,5 +66,10 @@ public class PlaceService {
         }
         return place;
     }
-
+    @Transactional
+    public void deletePlace(Place place) {
+        place.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
+        commentService.deleteCommentsByPlaceId(place.getId());
+        placeRepo.delete(place);
+    }
 }

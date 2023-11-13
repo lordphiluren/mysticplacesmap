@@ -51,7 +51,14 @@ public class CommentService {
         return comment;
     }
     @Transactional
+    public void deleteCommentsByPlaceId(String id) {
+        List<Comment> comments = commentRepo.findByPlaceId(id);
+        comments.forEach(comment -> comment.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl())));
+        commentRepo.deleteByPlaceId(id);
+    }
+    @Transactional
     public void deleteComment(Comment comment) {
+        comment.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
         commentRepo.delete(comment);
     }
     @Transactional

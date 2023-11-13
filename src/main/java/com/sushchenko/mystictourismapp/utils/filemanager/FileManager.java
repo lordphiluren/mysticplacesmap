@@ -61,4 +61,8 @@ public class FileManager {
             dir.mkdirs();
         return dir.getAbsolutePath();
     }
+    public void deleteFile(String path) {
+        File file = new File(path);
+        file.delete();
+    }
 }

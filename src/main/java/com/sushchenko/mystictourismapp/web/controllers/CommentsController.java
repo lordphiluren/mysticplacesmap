@@ -23,20 +23,11 @@ import java.util.stream.Collectors;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@RequestMapping("/api/places/{id}/comments")
+@RequestMapping("/api/comments")
 @RequiredArgsConstructor
 public class CommentsController {
     private final CommentService commentService;
     private final CommentMapper commentMapper;
-    @RequestMapping(path = "", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
-                                               @RequestPart CommentDTO commentDTO,
-                                               @RequestPart MultipartFile[] files) {
-        Comment comment = commentMapper.mapToComment(commentDTO);
-        comment.setPlaceId(id);
-        commentService.addComment(commentService.addCommentAttachments(comment, files));
-        return ResponseEntity.ok("Comment successfully added");
-    }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable String commentId) {

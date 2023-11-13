@@ -1,6 +1,7 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
 import com.sushchenko.mystictourismapp.entities.Attachment;
+import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.services.CommentService;
 import com.sushchenko.mystictourismapp.services.PlaceService;
@@ -57,6 +58,20 @@ public class PlacesController {
         Place place = placeMapper.mapToPlace(placeDTO);
         placeService.add(placeService.addPlaceAttachments(place, files));
         return ResponseEntity.ok("Place successfully added");
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePlace(@PathVariable String id) {
+        placeService.deletePlace(placeService.getById(id));
+        return ResponseEntity.ok("Place successfully deleted");
+    }
+    @RequestMapping(path = "/{id}/comments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
+                                               @RequestPart CommentDTO commentDTO,
+                                               @RequestPart MultipartFile[] files) {
+        Comment comment = commentMapper.mapToComment(commentDTO);
+        comment.setPlaceId(id);
+        commentService.addComment(commentService.addCommentAttachments(comment, files));
+        return ResponseEntity.ok("Comment successfully added");
     }
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
