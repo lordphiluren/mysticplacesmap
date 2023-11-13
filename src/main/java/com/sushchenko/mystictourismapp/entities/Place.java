@@ -26,9 +26,10 @@ public class Place {
     private String fullDescription;
     private String howToGet;
     private String address;
+    private double rating;
+    private List<Double> rates;
     private GeoJsonPoint location;
     private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;
-    private List<Comment> comments;
 }

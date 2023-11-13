@@ -10,5 +10,5 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 public class CommentDTO {
     private String text;
     @Field(targetType = FieldType.OBJECT_ID)
-    private String creator;
+    private UserDTO creator;
 }

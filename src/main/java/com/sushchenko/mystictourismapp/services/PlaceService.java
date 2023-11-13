@@ -1,18 +1,15 @@
 package com.sushchenko.mystictourismapp.services;
 
-import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.entities.enums.Status;
 import com.sushchenko.mystictourismapp.repos.PlaceRepo;
 import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
-import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.utils.exceptions.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,9 +22,17 @@ public class PlaceService {
     public void add(Place place) {
         place.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
         place.setStatus(Status.UNCONFIRMED);
-        place.setComments(Collections.emptyList());
+        place.setRates(Collections.emptyList());
+        place.setRating(0);
         placeRepo.save(place);
     }
+    @Transactional
+    public void addRatesById(String id, double rate) {
+        Place place = getById(id);
+        place.getRates().add(rate);
+        place.setRating(countPlaceRating(place));
+    }
+
     @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll();
@@ -37,12 +42,10 @@ public class PlaceService {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
-    @Transactional
-    public void addComment(String placeId, Comment comment) {
-        Place place = getById(placeId);
-        comment.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
-        comment.setCreatedAt(new Date());
-        place.getComments().add(comment);
-        placeRepo.save(place);
+
+    private double countPlaceRating(Place place) {
+        List<Double> rates = place.getRates();
+        return rates.stream().mapToDouble(Double::doubleValue).sum() / rates.size();
     }
+
 }
