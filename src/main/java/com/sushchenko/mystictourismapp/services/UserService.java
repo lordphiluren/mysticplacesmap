@@ -54,8 +54,4 @@ public class UserService {
         }
         return user;
     }
-    public User getLoggedUserInfo() {
-         return userRepo.findByUsername(authFacade.getAuthenticationPrincipal().getUsername()).orElse(null);
-    }
-
 }

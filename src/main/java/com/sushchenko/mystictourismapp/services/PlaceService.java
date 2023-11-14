@@ -19,14 +19,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
-    private final AuthenticationFacade authFacade;
     private final PlaceRepo placeRepo;
     private final FileManager fileManager;
     private final CommentService commentService;
 
     @Transactional
     public void add(Place place) {
-        place.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
         place.setStatus(Status.UNCONFIRMED);
         place.setRates(Collections.emptyList());
         place.setRating(0);

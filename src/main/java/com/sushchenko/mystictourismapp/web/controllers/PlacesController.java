@@ -4,6 +4,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.entities.Attachment;
 import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
+import com.sushchenko.mystictourismapp.entities.User;
+import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.services.CommentService;
 import com.sushchenko.mystictourismapp.services.PlaceService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
@@ -14,6 +16,7 @@ import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
 import com.sushchenko.mystictourismapp.web.dto.PlaceDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,8 +70,10 @@ public class PlacesController {
     }
     @RequestMapping(path = "", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addPlace(@RequestPart PlaceDTO placeDTO,
-                                      @RequestPart MultipartFile[] files) {
+                                      @RequestPart MultipartFile[] files,
+                                      @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.mapToPlace(placeDTO);
+        place.setCreator(userPrincipal.getUserId());
         placeService.add(placeService.addPlaceAttachments(place, files));
         return ResponseEntity.ok("Place successfully added");
     }
@@ -80,9 +85,11 @@ public class PlacesController {
     @RequestMapping(path = "/{id}/comments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
                                                @RequestPart CommentDTO commentDTO,
-                                               @RequestPart MultipartFile[] files) {
+                                               @RequestPart MultipartFile[] files,
+                                               @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Comment comment = commentMapper.mapToComment(commentDTO);
         comment.setPlaceId(id);
+        comment.setCreator(userPrincipal.getUserId());
         commentService.addComment(commentService.addCommentAttachments(comment, files));
         return ResponseEntity.ok("Comment successfully added");
     }

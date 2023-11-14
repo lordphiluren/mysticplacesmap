@@ -25,12 +25,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-    private final AuthenticationFacade authFacade;
     private final CommentRepo commentRepo;
     private final FileManager fileManager;
     @Transactional
     public void addComment(Comment comment) {
-        comment.setCreator(authFacade.getAuthenticationPrincipal().getUserId());
         comment.setCreatedAt(new Date());
         commentRepo.save(comment);
     }

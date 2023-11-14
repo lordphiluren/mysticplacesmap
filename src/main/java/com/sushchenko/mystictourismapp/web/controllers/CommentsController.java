@@ -27,7 +27,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequiredArgsConstructor
 public class CommentsController {
     private final CommentService commentService;
-    private final CommentMapper commentMapper;
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable String commentId) {
