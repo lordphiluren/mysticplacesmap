@@ -1,15 +1,11 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.sushchenko.mystictourismapp.entities.Attachment;
 import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
-import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.services.CommentService;
 import com.sushchenko.mystictourismapp.services.PlaceService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
-import com.sushchenko.mystictourismapp.utils.filemanager.FileManager;
 import com.sushchenko.mystictourismapp.utils.mappers.CommentMapper;
 import com.sushchenko.mystictourismapp.utils.mappers.PlaceMapper;
 import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
@@ -20,9 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -4,9 +4,8 @@ import com.sushchenko.mystictourismapp.entities.Attachment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.entities.enums.Status;
 import com.sushchenko.mystictourismapp.repos.PlaceRepo;
-import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
 import com.sushchenko.mystictourismapp.utils.exceptions.PlaceNotFoundException;
-import com.sushchenko.mystictourismapp.utils.filemanager.FileManager;
+import com.sushchenko.mystictourismapp.utils.filemanager.PlaceFileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceService {
     private final PlaceRepo placeRepo;
-    private final FileManager fileManager;
+    private final PlaceFileManager fileManager;
     private final CommentService commentService;
 
     @Transactional
@@ -60,7 +59,7 @@ public class PlaceService {
     public Place addPlaceAttachments(Place place, MultipartFile[] files) {
         // Save received files to image directory and set attach property to URLs of the created files
         if(files.length != 0) {
-            String path = fileManager.createPlacesDirectory(place.getName());
+            String path = fileManager.createDirectory(place.getName());
             List<String> fileUrls = fileManager.saveFiles(files, path);
             place.setAttachments(fileUrls.stream()
                     .map(Attachment::new)
@@ -70,12 +69,9 @@ public class PlaceService {
     }
     @Transactional
     public void deletePlace(Place place) {
-        deletePlaceAttachments(place);
+        fileManager.deletePlaceAttachments(place);
         commentService.deleteCommentsByPlaceId(place.getId());
         placeRepo.delete(place);
-    }
-    public void deletePlaceAttachments(Place place) {
-        place.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
     }
     @Transactional
     public void updatePlace(Place place) {

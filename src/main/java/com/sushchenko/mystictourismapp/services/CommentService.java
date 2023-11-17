@@ -2,22 +2,14 @@ package com.sushchenko.mystictourismapp.services;
 
 import com.sushchenko.mystictourismapp.entities.Attachment;
 import com.sushchenko.mystictourismapp.entities.Comment;
-import com.sushchenko.mystictourismapp.entities.Place;
-import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.repos.CommentRepo;
-import com.sushchenko.mystictourismapp.repos.PlaceRepo;
-import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
 import com.sushchenko.mystictourismapp.utils.exceptions.CommentNotFoundException;
-import com.sushchenko.mystictourismapp.utils.filemanager.FileManager;
-import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
-import com.sushchenko.mystictourismapp.web.dto.UserDTO;
+import com.sushchenko.mystictourismapp.utils.filemanager.CommentFileManager;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepo commentRepo;
-    private final FileManager fileManager;
+    private final CommentFileManager commentFileManager;
     @Transactional
     public void addComment(Comment comment) {
         comment.setCreatedAt(new Date());
@@ -40,23 +32,24 @@ public class CommentService {
 
     public Comment addCommentAttachments(Comment comment, MultipartFile[] files) {
         if(files.length != 0) {
-            String path = fileManager.createCommentsDirectory(comment.getPlaceId());
-            List<String> fileUrls = fileManager.saveFiles(files, path);
+            String path = commentFileManager.createDirectory(comment.getPlaceId());
+            List<String> fileUrls = commentFileManager.saveFiles(files, path);
             comment.setAttachments(fileUrls.stream()
                     .map(Attachment::new)
                     .collect(Collectors.toList()));
         }
         return comment;
     }
+
     @Transactional
     public void deleteCommentsByPlaceId(String id) {
         List<Comment> comments = commentRepo.findByPlaceId(id);
-        comments.forEach(comment -> comment.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl())));
+        comments.forEach(commentFileManager::deleteCommentsAttachments);
         commentRepo.deleteByPlaceId(id);
     }
     @Transactional
     public void deleteComment(Comment comment) {
-        comment.getAttachments().forEach(att -> fileManager.deleteFile(att.getUrl()));
+        commentFileManager.deleteCommentsAttachments(comment);
         commentRepo.delete(comment);
     }
     @Transactional

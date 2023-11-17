@@ -6,21 +6,20 @@ import com.sushchenko.mystictourismapp.repos.UserRepo;
 import com.sushchenko.mystictourismapp.security.AuthenticationFacade;
 import com.sushchenko.mystictourismapp.utils.exceptions.UserAlreadyExistException;
 import com.sushchenko.mystictourismapp.utils.exceptions.UserNotFoundException;
-import com.sushchenko.mystictourismapp.utils.filemanager.FileManager;
+import com.sushchenko.mystictourismapp.utils.filemanager.CommentFileManager;
+import com.sushchenko.mystictourismapp.utils.filemanager.UserFileManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
-    private final AuthenticationFacade authFacade;
-    private final FileManager fileManager;
+    private final UserFileManager fileManager;
     @Transactional
     public List<User> getUsers() {
         return userRepo.findAll();
@@ -48,7 +47,7 @@ public class UserService {
 
     public User addUserProfilePicture(User user, MultipartFile file) {
         if(!file.isEmpty()) {
-            String path = fileManager.createUsersDirectory(user.getUsername());
+            String path = fileManager.createDirectory(user.getUsername());
             String fileUrl = fileManager.saveFile(file, path);
             user.setProfilePicture(new Attachment(fileUrl));
         }
