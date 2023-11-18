@@ -77,4 +77,7 @@ public class PlaceService {
     public void updatePlace(Place place) {
         placeRepo.save(place);
     }
+    public void deletePlaceAttachments(Place place) {
+        fileManager.deletePlaceAttachments(place);
+    }
 }
