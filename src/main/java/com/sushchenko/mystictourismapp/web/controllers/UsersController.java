@@ -28,10 +28,11 @@ public class UsersController {
     @RequestMapping(path = "/{username}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateUserInfo(@PathVariable String username,
                                             @RequestPart UserDTO userDTO,
-                                            @RequestPart MultipartFile file) {
+                                            @RequestPart(required = false) MultipartFile file) {
         User user = userMapper.mapToUser(userDTO);
         user.setId(userService.getByUsername(username).getId());
-        userService.update(userService.addUserProfilePicture(user, file));
+        userService.addUserProfilePicture(user, file);
+        userService.update(user);
         return ResponseEntity.ok("User info successfully updated");
     }
 

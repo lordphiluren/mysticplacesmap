@@ -45,12 +45,11 @@ public class UserService {
         userRepo.save(user);
     }
 
-    public User addUserProfilePicture(User user, MultipartFile file) {
+    public void addUserProfilePicture(User user, MultipartFile file) {
         if(!file.isEmpty()) {
             String path = fileManager.createDirectory(user.getUsername());
             String fileUrl = fileManager.saveFile(file, path);
             user.setProfilePicture(new Attachment(fileUrl));
         }
-        return user;
     }
 }

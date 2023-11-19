@@ -33,7 +33,7 @@ public class PlacesController {
     @GetMapping()
     public List<PlaceDTO> getPlaces(@RequestParam(name = "tags", required = false) List<String> tags) {
 
-        if(tags.isEmpty()) {
+        if(tags == null) {
             return placeService.getAll()
                     .stream()
                     .map(placeMapper::mapToPlaceDTO)
@@ -63,11 +63,12 @@ public class PlacesController {
     }
     @RequestMapping(path = "", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addPlace(@RequestPart PlaceDTO placeDTO,
-                                      @RequestPart MultipartFile[] files,
+                                      @RequestPart(required = false) MultipartFile[] files,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.mapToPlace(placeDTO);
         place.setCreator(userPrincipal.getUserId());
-        placeService.add(placeService.addPlaceAttachments(place, files));
+        placeService.addPlaceAttachments(place, files);
+        placeService.add(place);
         return ResponseEntity.ok("Place successfully added");
     }
     @DeleteMapping("/{id}")
@@ -78,23 +79,25 @@ public class PlacesController {
     @RequestMapping(path = "/{id}/comments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
                                                @RequestPart CommentDTO commentDTO,
-                                               @RequestPart MultipartFile[] files,
+                                               @RequestPart(required = false) MultipartFile[] files,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Comment comment = commentMapper.mapToComment(commentDTO);
         comment.setPlaceId(id);
         comment.setCreator(userPrincipal.getUserId());
-        commentService.addComment(commentService.addCommentAttachments(comment, files));
+        commentService.addCommentAttachments(comment, files);
+        commentService.addComment(comment);
         return ResponseEntity.ok("Comment successfully added");
     }
     @RequestMapping(path = "/{id}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updatePlace(@PathVariable String id,
                                          @RequestPart PlaceDTO placeDTO,
-                                         @RequestPart MultipartFile[] files) {
+                                         @RequestPart(required = false) MultipartFile[] files) {
         Place place = placeMapper.mapToPlace(placeDTO);
         placeService.deletePlaceAttachments(placeService.getById(id));
         place.setId(id);
         place.setCreator(placeDTO.getCreator().getId());
-        placeService.updatePlace(placeService.addPlaceAttachments(place, files));
+        placeService.addPlaceAttachments(place, files);
+        placeService.updatePlace(place);
         return ResponseEntity.ok("Place successfully updated");
     }
     @ExceptionHandler

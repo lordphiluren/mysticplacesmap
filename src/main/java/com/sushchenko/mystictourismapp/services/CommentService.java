@@ -30,15 +30,16 @@ public class CommentService {
                 .orElseThrow(() -> new CommentNotFoundException("Comment with id: " + id + " not found"));
     }
 
-    public Comment addCommentAttachments(Comment comment, MultipartFile[] files) {
-        if(files.length != 0) {
-            String path = commentFileManager.createDirectory(comment.getPlaceId());
-            List<String> fileUrls = commentFileManager.saveFiles(files, path);
-            comment.setAttachments(fileUrls.stream()
-                    .map(Attachment::new)
-                    .collect(Collectors.toList()));
+    public void addCommentAttachments(Comment comment, MultipartFile[] files) {
+        if(files != null) {
+            if (files.length != 0) {
+                String path = commentFileManager.createDirectory(comment.getPlaceId());
+                List<String> fileUrls = commentFileManager.saveFiles(files, path);
+                comment.setAttachments(fileUrls.stream()
+                        .map(Attachment::new)
+                        .collect(Collectors.toList()));
+            }
         }
-        return comment;
     }
 
     @Transactional

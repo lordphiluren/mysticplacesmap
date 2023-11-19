@@ -7,6 +7,8 @@ import com.sushchenko.mystictourismapp.repos.PlaceRepo;
 import com.sushchenko.mystictourismapp.utils.exceptions.PlaceNotFoundException;
 import com.sushchenko.mystictourismapp.utils.filemanager.PlaceFileManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,16 +58,17 @@ public class PlaceService {
         place.setRating(countPlaceRating(place));
         placeRepo.save(place);
     }
-    public Place addPlaceAttachments(Place place, MultipartFile[] files) {
+    public void addPlaceAttachments(Place place, MultipartFile[] files) {
+        if(files!=null) {
         // Save received files to image directory and set attach property to URLs of the created files
-        if(files.length != 0) {
-            String path = fileManager.createDirectory(place.getName());
-            List<String> fileUrls = fileManager.saveFiles(files, path);
-            place.setAttachments(fileUrls.stream()
-                    .map(Attachment::new)
-                    .collect(Collectors.toList()));
+            if(files.length != 0) {
+                String path = fileManager.createDirectory(place.getName());
+                List<String> fileUrls = fileManager.saveFiles(files, path);
+                place.setAttachments(fileUrls.stream()
+                        .map(Attachment::new)
+                        .collect(Collectors.toList()));
+            }
         }
-        return place;
     }
     @Transactional
     public void deletePlace(Place place) {
