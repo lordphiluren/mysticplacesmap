@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.entities.User;
 import com.sushchenko.mystictourismapp.services.UserService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
@@ -38,6 +39,13 @@ public class UsersController {
 
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    private ResponseEntity<ControllerErrorResponse> handleException(JWTVerificationException e) {
         ControllerErrorResponse errorResponse = new ControllerErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis());

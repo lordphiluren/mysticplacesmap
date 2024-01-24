@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.services.CommentService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,13 @@ public class CommentsController {
     }
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    private ResponseEntity<ControllerErrorResponse> handleException(JWTVerificationException e) {
         ControllerErrorResponse errorResponse = new ControllerErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis());

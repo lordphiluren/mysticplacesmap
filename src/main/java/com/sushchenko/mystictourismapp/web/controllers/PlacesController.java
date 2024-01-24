@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.web.controllers;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
@@ -102,6 +103,13 @@ public class PlacesController {
     }
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    private ResponseEntity<ControllerErrorResponse> handleException(JWTVerificationException e) {
         ControllerErrorResponse errorResponse = new ControllerErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis());
