@@ -1,34 +1,41 @@
 package com.sushchenko.mystictourismapp.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sushchenko.mystictourismapp.entities.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @Getter
+@Setter
 @Builder
 public class UserPrincipal implements UserDetails {
-    private final String userId;
-    private final String username;
-    @JsonIgnore
-    private final String password;
-    private final Collection<? extends GrantedAuthority> authorities;
+//    private final String userId;
+//    private final String username;
+//    @JsonIgnore
+//    private final String password;
+//    private final Collection<? extends GrantedAuthority> authorities;
+    private User user;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return this.user.getUsername();
     }
 
     @Override

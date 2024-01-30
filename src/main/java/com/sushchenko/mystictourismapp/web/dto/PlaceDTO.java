@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sushchenko.mystictourismapp.entities.Attachment;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.sushchenko.mystictourismapp.entities.Point;
+import lombok.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -24,7 +27,7 @@ public class PlaceDTO {
     private String howToGet;
     private String address;
     private double rating;
-    private GeoJsonPoint location;
+    private Point location;
     private Set<String> tags;
     private List<Attachment> attachments;
     private List<CommentDTO> comments;

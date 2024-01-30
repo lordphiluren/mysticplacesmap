@@ -18,7 +18,7 @@ public class CommentMapper {
     private final UserService userService;
 
     public CommentDTO mapToCommentDTO(Comment comment) {
-        UserDTO userDTO = modelMapper.map(userService.getById(comment.getCreator()), UserDTO.class);
+        UserDTO userDTO = modelMapper.map(comment.getCreator(), UserDTO.class);
         CommentDTO commentDTO = modelMapper.map(comment, CommentDTO.class);
         commentDTO.setCreator(userDTO);
         return commentDTO;

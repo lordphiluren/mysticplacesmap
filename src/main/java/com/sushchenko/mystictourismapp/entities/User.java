@@ -5,12 +5,14 @@ import com.sushchenko.mystictourismapp.entities.enums.Role;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "users")
 public class User {
@@ -18,7 +20,6 @@ public class User {
     private String id;
     @NotNull(message = "Username cannot be null")
     private String username;
-    @JsonIgnore
     @NotNull(message = "Password cannot be null")
     private String password;
     private String name;

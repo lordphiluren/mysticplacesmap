@@ -4,20 +4,25 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.sushchenko.mystictourismapp.entities.Comment;
 import com.sushchenko.mystictourismapp.entities.Place;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
-import com.sushchenko.mystictourismapp.services.CommentService;
 import com.sushchenko.mystictourismapp.services.PlaceService;
 import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mappers.CommentMapper;
 import com.sushchenko.mystictourismapp.utils.mappers.PlaceMapper;
+import com.sushchenko.mystictourismapp.utils.mappers.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.CommentDTO;
 import com.sushchenko.mystictourismapp.web.dto.PlaceDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -30,7 +35,8 @@ public class PlacesController {
     private final CommentMapper commentMapper;
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
-    private final CommentService commentService;
+    private final UserMapper userMapper;
+    // private final CommentService commentService;
     @GetMapping()
     public List<PlaceDTO> getPlaces(@RequestParam(name = "tags", required = false) List<String> tags) {
 
@@ -50,11 +56,11 @@ public class PlacesController {
     @GetMapping("/{id}")
     public PlaceDTO getPlaceById(@PathVariable String id) {
         PlaceDTO placeDTO = placeMapper.mapToPlaceDTO(placeService.getById(id));
-        List<CommentDTO> comments = commentService.getCommentsByPlaceId(id)
-                .stream()
-                .map(commentMapper::mapToCommentDTO)
-                .toList();
-          placeDTO.setComments(comments);
+//        List<CommentDTO> comments = commentService.getCommentsByPlaceId(id)
+//                .stream()
+//                .map(commentMapper::mapToCommentDTO)
+//                .toList();
+//          placeDTO.setComments(comments);
         return placeDTO;
     }
     @PostMapping("/{id}")
@@ -67,8 +73,8 @@ public class PlacesController {
                                       @RequestPart(required = false) MultipartFile[] files,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.mapToPlace(placeDTO);
-        place.setCreator(userPrincipal.getUserId());
-        placeService.addPlaceAttachments(place, files);
+        place.setCreator(userPrincipal.getUser());
+        //placeService.addPlaceAttachments(place, files);
         placeService.add(place);
         return ResponseEntity.ok("Place successfully added");
     }
@@ -83,10 +89,10 @@ public class PlacesController {
                                                @RequestPart(required = false) MultipartFile[] files,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Comment comment = commentMapper.mapToComment(commentDTO);
-        comment.setPlaceId(id);
-        comment.setCreator(userPrincipal.getUserId());
-        commentService.addCommentAttachments(comment, files);
-        commentService.addComment(comment);
+        //comment.setPlaceId(id);
+        comment.setCreator(userPrincipal.getUser());
+//        commentService.addCommentAttachments(comment, files);
+//        commentService.addComment(comment);
         return ResponseEntity.ok("Comment successfully added");
     }
     @RequestMapping(path = "/{id}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -96,23 +102,33 @@ public class PlacesController {
         Place place = placeMapper.mapToPlace(placeDTO);
         placeService.deletePlaceAttachments(placeService.getById(id));
         place.setId(id);
-        place.setCreator(placeDTO.getCreator().getId());
+        place.setCreator(userMapper.mapToUser(placeDTO.getCreator()));
         placeService.addPlaceAttachments(place, files);
         placeService.updatePlace(place);
         return ResponseEntity.ok("Place successfully updated");
     }
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(JWTVerificationException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+    // Exception Handling
+
+//    @ExceptionHandler
+//    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+//        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
+//                System.currentTimeMillis());
+//        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
+//        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+//        return new ResponseEntity<>(errorResponse, httpStatus);
+//    }
+    // validation exception handler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

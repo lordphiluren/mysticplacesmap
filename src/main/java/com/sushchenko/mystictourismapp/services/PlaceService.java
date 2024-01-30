@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class PlaceService {
     private final PlaceRepo placeRepo;
     private final PlaceFileManager fileManager;
-    private final CommentService commentService;
+    //private final CommentService commentService;
 
     @Transactional
     public void add(Place place) {
@@ -73,7 +73,7 @@ public class PlaceService {
     @Transactional
     public void deletePlace(Place place) {
         fileManager.deletePlaceAttachments(place);
-        commentService.deleteCommentsByPlaceId(place.getId());
+        //commentService.deleteCommentsByPlaceId(place.getId());
         placeRepo.delete(place);
     }
     @Transactional

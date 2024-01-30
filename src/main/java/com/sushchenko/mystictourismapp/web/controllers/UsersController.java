@@ -7,11 +7,17 @@ import com.sushchenko.mystictourismapp.utils.exceptions.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mappers.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
@@ -37,18 +43,27 @@ public class UsersController {
         return ResponseEntity.ok("User info successfully updated");
     }
 
+    // Exception Handling
+
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
-                e.getMessage(),
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
                 System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(JWTVerificationException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    // validation exception handler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

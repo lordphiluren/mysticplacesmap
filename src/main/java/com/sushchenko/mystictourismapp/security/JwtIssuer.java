@@ -4,23 +4,24 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
 public class JwtIssuer {
     private final JwtProperties jwtProperties;
 
-    public String issue(String id, String username, List<String> roles) {
+    public String issue(UserPrincipal userPrincipal) {
         return JWT.create()
-                .withSubject(id)
+                .withSubject(userPrincipal.getUser().getId())
                 .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
-                .withClaim("username", username)
-                .withClaim("authorities", roles)
+                .withClaim("username", userPrincipal.getUsername())
+                .withClaim("authorities", userPrincipal.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).toList())
                 .sign(Algorithm.HMAC256(jwtProperties.getSecretKey()));
     }
 }

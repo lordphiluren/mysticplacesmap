@@ -2,12 +2,13 @@ package com.sushchenko.mystictourismapp.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 public class UserPrincipalAuthenticationToken extends AbstractAuthenticationToken {
-    private final UserPrincipal principal;
-    public UserPrincipalAuthenticationToken(UserPrincipal principal) {
+    private final UserDetails principal;
+    public UserPrincipalAuthenticationToken(UserDetails principal) {
         super(principal.getAuthorities());
         this.principal = principal;
         setAuthenticated(true);
@@ -19,7 +20,7 @@ public class UserPrincipalAuthenticationToken extends AbstractAuthenticationToke
     }
 
     @Override
-    public UserPrincipal getPrincipal() {
+    public UserDetails getPrincipal() {
         return principal;
     }
 }
