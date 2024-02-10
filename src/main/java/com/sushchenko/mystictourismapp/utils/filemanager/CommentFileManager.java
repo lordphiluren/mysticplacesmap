@@ -1,8 +1,7 @@
 package com.sushchenko.mystictourismapp.utils.filemanager;
 
-import com.ibm.icu.text.Transliterator;
-import com.sushchenko.mystictourismapp.entities.Comment;
-import com.sushchenko.mystictourismapp.utils.exceptions.FilesNotSavedException;
+import com.sushchenko.mystictourismapp.entity.Comment;
+import com.sushchenko.mystictourismapp.utils.exception.FilesNotSavedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

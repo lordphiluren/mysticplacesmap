@@ -1,6 +1,6 @@
 package com.sushchenko.mystictourismapp.utils.filemanager;
 
-import com.sushchenko.mystictourismapp.utils.exceptions.FilesNotSavedException;
+import com.sushchenko.mystictourismapp.utils.exception.FilesNotSavedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

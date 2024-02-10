@@ -1,8 +1,6 @@
 package com.sushchenko.mystictourismapp.security;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sushchenko.mystictourismapp.entities.User;
-import lombok.AllArgsConstructor;
+import com.sushchenko.mystictourismapp.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
