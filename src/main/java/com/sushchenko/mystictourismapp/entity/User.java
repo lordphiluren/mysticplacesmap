@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private String id;
-    @Indexed(unique = true)
     @NotNull(message = "Username can not be empty")
     @Size(min = 4, max = 32, message = "Username size should be between 4 and 32")
     private String username;
@@ -29,7 +28,6 @@ public class User {
     private String name;
     @Size(min = 2, max = 32, message = "Lastname size should be between 2 and 32")
     private String lastName;
-    @Indexed(unique = true)
     @Email(message = "Email should be valid")
     private String email;
     private Attachment profilePicture;

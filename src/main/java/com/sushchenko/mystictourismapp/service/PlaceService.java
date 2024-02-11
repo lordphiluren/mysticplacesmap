@@ -21,8 +21,12 @@ public class PlaceService {
     public void add(Place place) {
         place.setStatus(Status.UNCONFIRMED);
         place.setRates(Collections.singletonList(place.getRating()));
+        place.setComments(Collections.emptyList());
         placeRepo.save(place);
     }
+    // TODO
+    // Add sorting by name, rating, tags
+    // Add pagination
     @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll();
@@ -72,7 +76,4 @@ public class PlaceService {
     public void updatePlace(Place place) {
         placeRepo.save(place);
     }
-//    public void deletePlaceAttachments(Place place) {
-//        fileManager.deletePlaceAttachments(place);
-//    }
 }

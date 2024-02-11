@@ -14,10 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepo userRepo;
-    @Transactional
-    public List<User> getUsers() {
-        return userRepo.findAll();
-    }
+
     @Transactional
     public User getById(String id) {
         return userRepo.findById(id)
@@ -29,21 +26,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with username:" +  username + " was not found"));
     }
     @Transactional
-    public void add(User user) {
-        if (userRepo.findByUsername(user.getUsername()).isEmpty())
-            userRepo.save(user);
-        else throw new UserAlreadyExistException("Username is already taken");
-    }
-    @Transactional
     public void update(User user) {
         userRepo.save(user);
     }
-
-//    public void addUserProfilePicture(User user, MultipartFile file) {
-//        if(!file.isEmpty()) {
-//            String path = fileManager.createDirectory(user.getUsername());
-//            String fileUrl = fileManager.saveFile(file, path);
-//            user.setProfilePicture(new Attachment(fileUrl));
-//        }
-//    }
 }

@@ -11,6 +11,7 @@ import com.sushchenko.mystictourismapp.utils.mapper.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
@@ -47,7 +48,7 @@ public class PlacesController {
        }
     }
     @PostMapping()
-    public ResponseEntity<?> addPlace(@RequestPart PlaceRequest placeDto,
+    public ResponseEntity<?> addPlace(@Valid @RequestBody PlaceRequest placeDto,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
@@ -60,7 +61,7 @@ public class PlacesController {
         return placeMapper.toDto(placeService.getById(id));
     }
     @PostMapping("/{id}")
-    public ResponseEntity<?> addRating(@PathVariable String id, @RequestBody PlaceRequest placeDto) {
+    public ResponseEntity<?> addRating(@PathVariable String id, @Valid @RequestBody PlaceRequest placeDto) {
         placeService.addRatesById(id, placeDto.getRating());
         return ResponseEntity.ok("Rating added");
     }
@@ -75,7 +76,7 @@ public class PlacesController {
     // add checking if user is creator
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlace(@PathVariable String id,
-                                         @RequestPart PlaceRequest placeDto) {
+                                         @Valid @RequestBody PlaceRequest placeDto) {
         Place place = placeMapper.toEntity(placeDto);
         place.setId(id);
         place.setCreator(userMapper.toEntity(placeDto.getCreator()));
@@ -84,25 +85,29 @@ public class PlacesController {
     }
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
-                                               @RequestPart CommentRequest commentDTO,
+                                               @Valid @RequestBody CommentRequest commentDTO,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Place place = placeService.getById(id);
+        List<Comment> comments = place.getComments();
+
         Comment comment = commentMapper.toEntity(commentDTO);
-        //comment.setPlaceId(id);
         comment.setCreator(userPrincipal.getUser());
-//        commentService.addCommentAttachments(comment, files);
-//        commentService.addComment(comment);
+
+        comments.add(comment);
+        place.setComments(comments);
+        placeService.updatePlace(place);
         return ResponseEntity.ok("Comment successfully added");
     }
 
     // Exception Handling
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
-                System.currentTimeMillis());
-        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
+//    @ExceptionHandler
+//    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+//        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
+//                System.currentTimeMillis());
+//        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
+//        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+//        return new ResponseEntity<>(errorResponse, httpStatus);
+//    }
     // validation exception handler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

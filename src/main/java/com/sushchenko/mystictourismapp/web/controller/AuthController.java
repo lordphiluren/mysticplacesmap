@@ -1,14 +1,19 @@
 package com.sushchenko.mystictourismapp.web.controller;
 
+import com.mongodb.MongoWriteException;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.AuthService;
 import com.sushchenko.mystictourismapp.service.UserService;
+import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
+import com.sushchenko.mystictourismapp.utils.exception.UserAlreadyExistException;
 import com.sushchenko.mystictourismapp.web.dto.AuthRequest;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,13 +30,12 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final ModelMapper modelMapper;
-    private final UserService userService;
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest authRequest) {
+    public AuthResponse login(@Valid @RequestBody AuthRequest authRequest) {
         return authService.attemptLogin(authRequest.getUsername(), authRequest.getPassword());
     }
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody AuthRequest authRequest) {
         authService.signUp(modelMapper.map(authRequest, User.class));
         return ResponseEntity.ok("Successful registration");
     }
@@ -40,17 +44,15 @@ public class AuthController {
         return modelMapper.map(userPrincipal.getUser(), UserResponse.class);
     }
 
-
-    // Exception Handling
-
-//    @ExceptionHandler
-//    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-//        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
-//                System.currentTimeMillis());
-//        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-//        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-//        return new ResponseEntity<>(errorResponse, httpStatus);
-//    }
+//     Exception Handling
+    @ExceptionHandler
+    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
+                System.currentTimeMillis());
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
     // validation exception handler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

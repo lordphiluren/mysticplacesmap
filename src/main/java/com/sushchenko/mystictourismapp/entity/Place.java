@@ -20,7 +20,6 @@ import java.util.Set;
 public class Place {
     @Id
     private String id;
-    @Indexed(unique = true)
     @NotNull(message = "Place name can not be empty")
     private String name;
     private User creator;
@@ -41,6 +40,5 @@ public class Place {
     private Status status;
     private Set<String> tags;
     private List<Attachment> attachments;
-    @DBRef(lazy = true)
     private List<Comment> comments;
 }

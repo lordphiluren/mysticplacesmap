@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mapper.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.UserRequest;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
@@ -23,18 +24,17 @@ import java.util.Map;
 public class UsersController {
     private final UserService userService;
     private final UserMapper userMapper;
-
-    @GetMapping("/{username}")
-    public UserResponse getUserInfo(@PathVariable String username) {
-        return userMapper.toDto(userService.getByUsername(username));
+    @GetMapping("/{id}")
+    public UserResponse getUserInfo(@PathVariable String id) {
+        return userMapper.toDto(userService.getById(id));
     }
     // TODO
     // add checking if user is updated user
-    @PutMapping(path = "/{username}")
-    public ResponseEntity<?> updateUserInfo(@PathVariable String username,
-                                            @RequestPart UserRequest userDto) {
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<?> updateUserInfo(@PathVariable String id,
+                                            @Valid @RequestBody UserRequest userDto) {
         User user = userMapper.toEntity(userDto);
-        user.setId(userService.getByUsername(username).getId());
+        user.setId(id);
         userService.update(user);
         return ResponseEntity.ok("User info successfully updated");
     }
