@@ -1,36 +1,44 @@
 package com.sushchenko.mystictourismapp.entity;
 
 import com.sushchenko.mystictourismapp.entity.enums.Role;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "users")
+@Entity
+@Table(name = "Users")
 public class User {
     @Id
-    private String id;
-    @NotNull(message = "Username can not be empty")
-    @Size(min = 4, max = 32, message = "Username size should be between 4 and 32")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
-    @Size(min = 6, max = 20, message = "Password size should be between 6 and 20")
-    @NotNull(message = "Password can not be empty")
+    @Column(name = "password", nullable = false)
     private String password;
-    @Size(min = 2, max = 32, message = "Name size should be between 2 and 32")
+    @Column(name = "name")
     private String name;
-    @Size(min = 2, max = 32, message = "Lastname size should be between 2 and 32")
+    @Column(name = "last_name")
     private String lastName;
-    @Email(message = "Email should be valid")
+    @Column(name = "email", unique = true)
     private String email;
-    private Attachment profilePicture;
-    @NotNull(message = "Role cannot be empty")
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    // Relations
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    private List<Place> places;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    private List<PlaceRating> placeRatings;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    private List<Comment> comments;
 }
