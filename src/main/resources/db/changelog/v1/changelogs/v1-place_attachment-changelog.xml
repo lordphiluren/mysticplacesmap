@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="v1-1" author="Sushchenko Artyom">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="Place_Attachment"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="Place_Attachment">
+            <column name="place_id" type="bigint" />
+            <column name="attachment_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey tableName="Place_Attachment" columnNames="place_id, attachment_id" constraintName="pk_place_attachment"/>
+        <addForeignKeyConstraint baseTableName="Place_Attachment" baseColumnNames="place_id" constraintName="fk_place_attachment"
+                                 referencedTableName="Place"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="Place_Attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_place"
+                                 referencedTableName="Attachment"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

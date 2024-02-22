@@ -1,29 +1,41 @@
-<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Comments"/>
+                <tableExists tableName="Comment"/>
             </not>
         </preConditions>
 
-        <createTable tableName="Comments">
-            <column name="id" type="bigint" autoIncrement="true">
+        <createTable tableName="Comment">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="message" type="varchar">
                 <constraints nullable="false" />
             </column>
             <column name="created_at" type="timestamp" />
-            <column name="creator_id" type="bigint" >
-                <constraints foreignKeyName="fk_users_comments" referencedTableName="Users" referencedColumnNames="id" />
-            </column>
-            <column name="place_id" type="bigint">
-                <constraints foreignKeyName="fk_places_comments" referencedTableName="Places" referencedColumnNames="id" />
-            </column>
+            <column name="creator_id" type="bigint" />
+            <column name="place_id" type="bigint" />
         </createTable>
+        <addAutoIncrement tableName="Comment" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />
+        <addForeignKeyConstraint baseTableName="Comment" baseColumnNames="id" constraintName="fk_users_comment"
+                                 referencedTableName="Users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="Comment" baseColumnNames="id" constraintName="fk_place_comment"
+                                 referencedTableName="Place"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>

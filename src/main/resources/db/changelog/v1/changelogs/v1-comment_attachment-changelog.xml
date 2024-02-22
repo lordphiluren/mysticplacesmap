@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="v1-1" author="Sushchenko Artyom">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="Comment_Attachment"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="Comment_Attachment">
+            <column name="comment_id" type="bigint" />
+            <column name="attachment_id" type="bigint" />
+        </createTable>
+        <addPrimaryKey tableName="Comment_Attachment" columnNames="comment_id, attachment_id" constraintName="pk_comment_attachment"/>
+        <addForeignKeyConstraint baseTableName="Comment_Attachment" baseColumnNames="comment_id" constraintName="fk_comment_attachment"
+                                 referencedTableName="Comment"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="Comment_Attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_comment"
+                                 referencedTableName="Attachment"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,15 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="changelogs/v1-users-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-tag-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-place-chagelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-attachment-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-placeratings-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-comment-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-place_attachment-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-comment_attachment-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/v1-place_tag-changelog.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
