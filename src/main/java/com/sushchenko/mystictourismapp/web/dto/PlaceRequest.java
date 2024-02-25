@@ -3,11 +3,11 @@ package com.sushchenko.mystictourismapp.web.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sushchenko.mystictourismapp.entity.Point;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -31,8 +31,10 @@ public class PlaceRequest {
     @Size(max = 256, message = "Address length should be lower than 256 characters")
     private String address;
     @NotNull(message = "Rating can not be empty")
-    private double rating;
-    @NotNull(message = "Location cannot be empty")
-    private Point location;
+    private Double rating;
+    @NotNull(message = "Latitude cannot be empty")
+    private Double latitude;
+    @NotNull(message = "Longitude cannot be empty")
+    private Double longitude;
     private Set<String> tags;
 }

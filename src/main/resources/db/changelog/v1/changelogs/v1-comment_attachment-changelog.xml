@@ -10,22 +10,22 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Comment_Attachment"/>
+                <tableExists tableName='comment_attachment'/>
             </not>
         </preConditions>
 
-        <createTable tableName="Comment_Attachment">
+        <createTable tableName='comment_attachment'>
             <column name="comment_id" type="bigint" />
             <column name="attachment_id" type="bigint" />
         </createTable>
-        <addPrimaryKey tableName="Comment_Attachment" columnNames="comment_id, attachment_id" constraintName="pk_comment_attachment"/>
-        <addForeignKeyConstraint baseTableName="Comment_Attachment" baseColumnNames="comment_id" constraintName="fk_comment_attachment"
-                                 referencedTableName="Comment"
+        <addPrimaryKey tableName="comment_attachment" columnNames="comment_id, attachment_id" constraintName="pk_comment_attachment"/>
+        <addForeignKeyConstraint baseTableName="comment_attachment" baseColumnNames="comment_id" constraintName="fk_comment_attachment"
+                                 referencedTableName="comment"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="Comment_Attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_comment"
-                                 referencedTableName="Attachment"
+        <addForeignKeyConstraint baseTableName="comment_attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_comment"
+                                 referencedTableName="attachment"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>

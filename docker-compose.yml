@@ -11,14 +11,14 @@ services:
       - service-db
     environment:
       - SERVER_PORT= 8080
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/task_management
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/diploma_db
 
   service-db:
     image: postgres:alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: task_management
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: diploma_db
     ports:
       - "5432:5432"
     volumes:

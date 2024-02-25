@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Attachment")
+@Table(name = "attachment")
 public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Attachment {
     // Relations
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Comment_Attachment",
+            name = "comment_attachment",
             joinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") }
     )
@@ -31,7 +31,7 @@ public class Attachment {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Place_Attachment",
+            name = "place_attachment",
             joinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") }
     )

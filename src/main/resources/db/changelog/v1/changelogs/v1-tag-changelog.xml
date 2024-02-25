@@ -10,19 +10,19 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Tag"/>
+                <tableExists tableName='tag'/>
             </not>
         </preConditions>
 
-        <createTable tableName="Tag">
-            <column name="id" type="bigint">
+        <createTable tableName='tag'>
+            <column name="id" type="bigint" generationType="ALWAYS" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="name" type="varchar">
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
-        <addAutoIncrement tableName="Tag" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />
+<!--        <addAutoIncrement tableName="tag" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />-->
     </changeSet>
 
 </databaseChangeLog>

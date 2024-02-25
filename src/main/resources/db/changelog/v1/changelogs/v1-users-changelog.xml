@@ -10,28 +10,28 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Users"/>
+                <tableExists tableName='users'/>
             </not>
         </preConditions>
 
-        <createTable tableName="Users">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false" />
+        <createTable tableName='users'>
+            <column name="id" type="bigint" generationType="ALWAYS" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="varchar(32)">
                 <constraints nullable="false" unique="true" />
             </column>
-            <column name="password" type="varchar(20)">
+            <column name="password" type="varchar">
                 <constraints nullable="false" />
             </column>
             <column name="name" type="varchar(32)" />
             <column name="last_name" type="varchar(32)" />
             <column name="email" type="varchar(64)">
-                <constraints unique="true" nullable="false" />
+                <constraints unique="true"/>
             </column>
             <column name="role" type="varchar(32)" />
         </createTable>
-        <addAutoIncrement tableName="Users" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />
+<!--        <addAutoIncrement tableName="users" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />-->
     </changeSet>
 
 </databaseChangeLog>

@@ -10,19 +10,19 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Attachment"/>
+                <tableExists tableName='attachment'/>
             </not>
         </preConditions>
 
-        <createTable tableName="Attachment">
-            <column name="id" type="bigint">
+        <createTable tableName='attachment'>
+            <column name="id" type="bigint" generationType="ALWAYS" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="url" type="varchar">
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addAutoIncrement tableName="Attachment" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />
+<!--        <addAutoIncrement tableName="attachment" columnName="id" incrementBy="1" startWith="1" generationType="ALWAYS" />-->
     </changeSet>
 
 </databaseChangeLog>

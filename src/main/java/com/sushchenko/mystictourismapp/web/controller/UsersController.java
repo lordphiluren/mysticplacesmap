@@ -25,13 +25,13 @@ public class UsersController {
     private final UserService userService;
     private final UserMapper userMapper;
     @GetMapping("/{id}")
-    public UserResponse getUserInfo(@PathVariable String id) {
+    public UserResponse getUserInfo(@PathVariable Long id) {
         return userMapper.toDto(userService.getById(id));
     }
     // TODO
     // add checking if user is updated user
     @PutMapping(path = "/{id}")
-    public ResponseEntity<?> updateUserInfo(@PathVariable String id,
+    public ResponseEntity<?> updateUserInfo(@PathVariable Long id,
                                             @Valid @RequestBody UserRequest userDto) {
         User user = userMapper.toEntity(userDto);
         user.setId(id);

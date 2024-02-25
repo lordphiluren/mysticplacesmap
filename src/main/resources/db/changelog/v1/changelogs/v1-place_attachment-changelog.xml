@@ -10,22 +10,22 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Place_Attachment"/>
+                <tableExists tableName="place_attachment"/>
             </not>
         </preConditions>
 
-        <createTable tableName="Place_Attachment">
+        <createTable tableName="place_attachment">
             <column name="place_id" type="bigint" />
             <column name="attachment_id" type="bigint" />
         </createTable>
-        <addPrimaryKey tableName="Place_Attachment" columnNames="place_id, attachment_id" constraintName="pk_place_attachment"/>
-        <addForeignKeyConstraint baseTableName="Place_Attachment" baseColumnNames="place_id" constraintName="fk_place_attachment"
-                                 referencedTableName="Place"
+        <addPrimaryKey tableName="place_attachment" columnNames="place_id, attachment_id" constraintName="pk_place_attachment"/>
+        <addForeignKeyConstraint baseTableName="place_attachment" baseColumnNames="place_id" constraintName="fk_place_attachment"
+                                 referencedTableName="place"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="Place_Attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_place"
-                                 referencedTableName="Attachment"
+        <addForeignKeyConstraint baseTableName="place_attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_place"
+                                 referencedTableName="attachment"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>

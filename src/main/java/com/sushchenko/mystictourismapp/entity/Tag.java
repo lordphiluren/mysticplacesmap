@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Tag")
+@Table(name = "tag")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Tag {
     // Relations
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Place_Tag",
+            name = "place_tag",
             joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") }
     )

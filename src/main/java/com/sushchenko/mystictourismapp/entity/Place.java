@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Place")
+@Table(name = "place")
 public class Place {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +52,7 @@ public class Place {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Place_Tag",
+            name = "place_tag",
             joinColumns = { @JoinColumn(name = "place_id") },
             inverseJoinColumns = { @JoinColumn(name = "tag_id") }
     )

@@ -17,7 +17,7 @@ public class JwtIssuer {
 
     public String issue(UserPrincipal userPrincipal) {
         return JWT.create()
-                .withSubject(userPrincipal.getUser().getId())
+                .withSubject(userPrincipal.getUser().getId().toString())
                 .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
                 .withClaim("username", userPrincipal.getUsername())
                 .withClaim("authorities", userPrincipal.getAuthorities().stream()

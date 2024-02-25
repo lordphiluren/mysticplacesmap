@@ -16,7 +16,7 @@ public class UserService {
     private final UserRepo userRepo;
 
     @Transactional
-    public User getById(String id) {
+    public User getById(Long id) {
         return userRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id:" + id + " was not found"));
     }

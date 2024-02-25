@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "PlaceRating")
+@Table(name = "place_rating")
 public class PlaceRating {
     @EmbeddedId
     private PlaceRatingKey id;

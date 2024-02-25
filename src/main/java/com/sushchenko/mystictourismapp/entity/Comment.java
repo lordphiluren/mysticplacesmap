@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Comment")
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Comment {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Comment_Attachment",
+            name = "comment_attachment",
             joinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") }
     )

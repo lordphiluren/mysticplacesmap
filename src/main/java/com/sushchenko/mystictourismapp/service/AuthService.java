@@ -1,13 +1,10 @@
 package com.sushchenko.mystictourismapp.service;
 
-import com.mongodb.MongoWriteException;
-import com.mongodb.WriteError;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.entity.enums.Role;
 import com.sushchenko.mystictourismapp.repo.UserRepo;
 import com.sushchenko.mystictourismapp.security.JwtIssuer;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
-import com.sushchenko.mystictourismapp.utils.exception.UserAlreadyExistException;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -20,7 +20,7 @@ public class PlaceService {
     @Transactional
     public void add(Place place) {
         place.setStatus(Status.UNCONFIRMED);
-        place.setRates(Collections.singletonList(place.getRating()));
+//        place.setRates(Collections.singletonList(place.getRating()));
         place.setComments(Collections.emptyList());
         placeRepo.save(place);
     }
@@ -36,24 +36,24 @@ public class PlaceService {
         return placeRepo.findByTagsIn(tags);
     }
     @Transactional
-    public Place getById(String id) {
+    public Place getById(Long id) {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
 
-    private double countPlaceRating(Place place) {
-        List<Double> rates = place.getRates();
-        return rates.stream().mapToDouble(Double::doubleValue).sum() / rates.size();
-    }
-    @Transactional
-    public void addRatesById(String id, double rate) {
-        Place place = getById(id);
-        List<Double> rates = place.getRates();
-        rates.add(rate);
-        place.setRates(rates);
-        place.setRating(countPlaceRating(place));
-        placeRepo.save(place);
-    }
+//    private double countPlaceRating(Place place) {
+//        List<Double> rates = place.getRates();
+//        return rates.stream().mapToDouble(Double::doubleValue).sum() / rates.size();
+//    }
+//    @Transactional
+//    public void addRatesById(String id, double rate) {
+//        Place place = getById(id);
+//        List<Double> rates = place.getRates();
+//        rates.add(rate);
+//        place.setRates(rates);
+//        place.setRating(countPlaceRating(place));
+//        placeRepo.save(place);
+//    }
 //    public void addPlaceAttachments(Place place, MultipartFile[] files) {
 //        if(files!=null) {
 //        // Save received files to image directory and set attach property to URLs of the created files

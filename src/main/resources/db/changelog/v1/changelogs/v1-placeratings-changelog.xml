@@ -10,25 +10,25 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="PlaceRating"/>
+                <tableExists tableName='place_rating'/>
             </not>
         </preConditions>
 
-        <createTable tableName="PlaceRating">
+        <createTable tableName='place_rating'>
             <column name="user_id" type="bigint" />
             <column name="place_id" type="bigint" />
             <column name="rate" type="double">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey tableName="PlaceRating" columnNames="user_id, place_id" constraintName="pk_PlaceRating"/>
-        <addForeignKeyConstraint baseTableName="PlaceRating" baseColumnNames="user_id" constraintName="fk_users_rating"
-                                 referencedTableName="Users"
+        <addPrimaryKey tableName="place_rating" columnNames="user_id, place_id" constraintName="pk_PlaceRating"/>
+        <addForeignKeyConstraint baseTableName="place_rating" baseColumnNames="user_id" constraintName="fk_users_rating"
+                                 referencedTableName="users"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="PlaceRating" baseColumnNames="place_id" constraintName="fk_place_rating"
-                                 referencedTableName="Place"
+        <addForeignKeyConstraint baseTableName="place_rating" baseColumnNames="place_id" constraintName="fk_place_rating"
+                                 referencedTableName="place"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>

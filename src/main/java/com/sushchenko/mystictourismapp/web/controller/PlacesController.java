@@ -57,25 +57,25 @@ public class PlacesController {
         return ResponseEntity.ok("Place successfully added");
     }
     @GetMapping("/{id}")
-    public PlaceResponse getPlaceById(@PathVariable String id) {
+    public PlaceResponse getPlaceById(@PathVariable Long id) {
         return placeMapper.toDto(placeService.getById(id));
     }
-    @PostMapping("/{id}")
-    public ResponseEntity<?> addRating(@PathVariable String id, @Valid @RequestBody PlaceRequest placeDto) {
-        placeService.addRatesById(id, placeDto.getRating());
-        return ResponseEntity.ok("Rating added");
-    }
+//    @PostMapping("/{id}")
+//    public ResponseEntity<?> addRating(@PathVariable String id, @Valid @RequestBody PlaceRequest placeDto) {
+//        placeService.addRatesById(id, placeDto.getRating());
+//        return ResponseEntity.ok("Rating added");
+//    }
     // TODO
     // add checking if user is creator
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePlace(@PathVariable String id) {
+    public ResponseEntity<?> deletePlace(@PathVariable Long id) {
         placeService.deletePlace(placeService.getById(id));
         return ResponseEntity.ok("Place successfully deleted");
     }
     // TODO
     // add checking if user is creator
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePlace(@PathVariable String id,
+    public ResponseEntity<?> updatePlace(@PathVariable Long id,
                                          @Valid @RequestBody PlaceRequest placeDto) {
         Place place = placeMapper.toEntity(placeDto);
         place.setId(id);
@@ -84,7 +84,7 @@ public class PlacesController {
         return ResponseEntity.ok("Place successfully updated");
     }
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addCommentToPlace(@PathVariable String id,
+    public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
                                                @Valid @RequestBody CommentRequest commentDTO,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeService.getById(id);

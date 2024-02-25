@@ -10,22 +10,22 @@
     <changeSet id="v1-1" author="Sushchenko Artyom">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="Place_Tag"/>
+                <tableExists tableName="place_tag"/>
             </not>
         </preConditions>
 
-        <createTable tableName="Place_Tag">
+        <createTable tableName="place_tag">
             <column name="place_id" type="bigint" />
             <column name="tag_id" type="bigint" />
         </createTable>
-        <addPrimaryKey tableName="Place_Tag" columnNames="place_id, tag_id" constraintName="pk_place_tag"/>
-        <addForeignKeyConstraint baseTableName="Place_Tag" baseColumnNames="place_id" constraintName="fk_place_tag"
-                                 referencedTableName="Place"
+        <addPrimaryKey tableName="place_tag" columnNames="place_id, tag_id" constraintName="pk_place_tag"/>
+        <addForeignKeyConstraint baseTableName="place_tag" baseColumnNames="place_id" constraintName="fk_place_tag"
+                                 referencedTableName="place"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="Place_Tag" baseColumnNames="tag_id" constraintName="fk_tag_place"
-                                 referencedTableName="Tag"
+        <addForeignKeyConstraint baseTableName="place_tag" baseColumnNames="tag_id" constraintName="fk_tag_place"
+                                 referencedTableName="tag"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
