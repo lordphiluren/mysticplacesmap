@@ -2,6 +2,7 @@ package com.sushchenko.mystictourismapp.web.controller;
 
 import com.sushchenko.mystictourismapp.entity.Comment;
 import com.sushchenko.mystictourismapp.entity.Place;
+import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.PlaceService;
 import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
@@ -52,7 +53,6 @@ public class PlacesController {
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
-        //placeService.addPlaceAttachments(place, files);
         placeService.add(place);
         return ResponseEntity.ok("Place successfully added");
     }
@@ -109,16 +109,16 @@ public class PlacesController {
 //        return new ResponseEntity<>(errorResponse, httpStatus);
 //    }
     // validation exception handler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public Map<String, String> handleValidationExceptions(
+//            MethodArgumentNotValidException ex) {
+//        Map<String, String> errors = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errors.put(fieldName, errorMessage);
+//        });
+//        return errors;
+//    }
 }

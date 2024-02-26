@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,8 +21,11 @@ public class PlaceService {
     @Transactional
     public void add(Place place) {
         place.setStatus(Status.UNCONFIRMED);
-//        place.setRates(Collections.singletonList(place.getRating()));
         place.setComments(Collections.emptyList());
+        place.setCreatedAt(new Date());
+        if(place.getRating() == null) {
+            place.setRating(0.0);
+        }
         placeRepo.save(place);
     }
     // TODO

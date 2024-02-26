@@ -3,7 +3,6 @@ package com.sushchenko.mystictourismapp.service;
 import com.sushchenko.mystictourismapp.entity.Place;
 import com.sushchenko.mystictourismapp.entity.enums.Status;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
-import com.sushchenko.mystictourismapp.utils.filemanager.PlaceFileManager;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,6 @@ class PlaceServiceTest {
     private PlaceService placeService;
     @Mock
     private PlaceRepo placeRepo;
-    @Mock
-    private PlaceFileManager fileManager;
     @Test
     void givePlace_whenAdd_thenPlaceAdded() {
         // given
@@ -38,7 +35,6 @@ class PlaceServiceTest {
         //then
         verify(placeRepo, times(1)).save(place);
         assertEquals(place.getStatus(), Status.UNCONFIRMED);
-        assertIterableEquals(place.getRates(), Collections.emptyList());
         assertEquals(place.getRating(), 0);
     }
 
@@ -73,14 +69,14 @@ class PlaceServiceTest {
     void givePlaceId_whenGetById_thenReturnPlace() {
         // given
         Place expected = new Place();
-        when(placeRepo.findById(anyString())).thenReturn(Optional.of(expected));
+        when(placeRepo.findById(anyLong())).thenReturn(Optional.of(expected));
 
         // when
-        Place actual = placeService.getById(anyString());
+        Place actual = placeService.getById(anyLong());
 
         // then
         assertEquals(expected, actual);
-        verify(placeRepo, times(1)).findById(anyString());
+        verify(placeRepo, times(1)).findById(anyLong());
         verifyNoMoreInteractions(placeRepo);
     }
 
@@ -100,8 +96,4 @@ class PlaceServiceTest {
     void updatePlace() {
     }
 
-    private double countPlaceRating(Place place) {
-        List<Double> rates = place.getRates();
-        return rates.stream().mapToDouble(Double::doubleValue).sum() / rates.size();
-    }
 }

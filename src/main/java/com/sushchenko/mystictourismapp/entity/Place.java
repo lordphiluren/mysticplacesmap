@@ -66,7 +66,7 @@ public class Place {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Place_Attachment",
+            name = "place_attachment",
             joinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") }
     )
