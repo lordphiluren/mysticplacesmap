@@ -3,6 +3,7 @@ package com.sushchenko.mystictourismapp.web.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.sushchenko.mystictourismapp.entity.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -36,5 +37,5 @@ public class PlaceRequest {
     private Double latitude;
     @NotNull(message = "Longitude cannot be empty")
     private Double longitude;
-    private Set<String> tags;
+    private Set<Tag> tags;
 }

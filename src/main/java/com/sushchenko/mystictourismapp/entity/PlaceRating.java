@@ -19,7 +19,7 @@ public class PlaceRating {
     private Double rate;
 
     // Relations
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User creator;
@@ -28,4 +28,10 @@ public class PlaceRating {
     @MapsId("placeId")
     @JoinColumn(name = "place_id", referencedColumnName = "id")
     private Place place;
+
+    public PlaceRating(Double rate, User creator, Place place) {
+        this.rate = rate;
+        this.creator = creator;
+        this.place = place;
+    }
 }
