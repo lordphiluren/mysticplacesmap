@@ -18,13 +18,13 @@ public class PlaceMapper {
 
     public PlaceResponse toDto(Place place) {
         UserResponse userDto = modelMapper.map(place.getCreator(), UserResponse.class);
-        List<CommentResponse> commentsDto = place.getComments()
-                .stream()
-                .map(c -> modelMapper.map(c, CommentResponse.class))
-                .toList();
+//        List<CommentResponse> commentsDto = place.getComments()
+//                .stream()
+//                .map(c -> modelMapper.map(c, CommentResponse.class))
+//                .toList();
         PlaceResponse placeDto  = modelMapper.map(place, PlaceResponse.class);
         placeDto.setCreator(userDto);
-        placeDto.setComments(commentsDto);
+        //placeDto.setComments(commentsDto);
         return placeDto;
     }
     public Place toEntity(PlaceRequest placeDto) {

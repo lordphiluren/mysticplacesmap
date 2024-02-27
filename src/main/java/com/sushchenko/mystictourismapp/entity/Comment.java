@@ -5,7 +5,15 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
-
+@NamedEntityGraph(
+        name = "comment-entity-graph-user_attachs",
+        attributeNodes = {
+                @NamedAttributeNode("message"),
+                @NamedAttributeNode("createdAt"),
+                @NamedAttributeNode("creator"),
+                @NamedAttributeNode("attachments")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +32,7 @@ public class Comment {
     private Date createdAt;
 
     // Relations
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
@@ -32,7 +40,7 @@ public class Comment {
     @JoinColumn(name = "place_id", referencedColumnName = "id")
     private Place place;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "comment_attachment",
             joinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") },

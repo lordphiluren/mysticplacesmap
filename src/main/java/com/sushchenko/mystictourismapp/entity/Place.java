@@ -4,11 +4,30 @@ import com.sushchenko.mystictourismapp.entity.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
+@NamedEntityGraph(
+    name = "place-entity-graph-user_tags_attachs_comments",
+    attributeNodes = {
+        @NamedAttributeNode("name"),
+        @NamedAttributeNode("shortDescription"),
+        @NamedAttributeNode("fullDescription"),
+        @NamedAttributeNode("howToGet"),
+        @NamedAttributeNode("address"),
+        @NamedAttributeNode("rating"),
+        @NamedAttributeNode("latitude"),
+        @NamedAttributeNode("longitude"),
+        @NamedAttributeNode("status"),
+        @NamedAttributeNode("createdAt"),
+        @NamedAttributeNode("creator"),
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("attachments")
+    }
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,7 +51,6 @@ public class Place {
     private String address;
     @Column(name = "rating")
     @ColumnDefault("0")
-    // TODO count rating in db
     private Double rating;
     @Column(name = "latitude", nullable = false)
     private Double latitude;
@@ -46,11 +64,11 @@ public class Place {
     private Date createdAt;
 
     // Relations
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "place_tag",
             joinColumns = { @JoinColumn(name = "place_id") },
@@ -64,7 +82,7 @@ public class Place {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
     private List<Comment> comments;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "place_attachment",
             joinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") },
