@@ -4,7 +4,6 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <include file="changelogs/v1-users-changelog.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/v1-tag-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-place-chagelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-attachment-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-placeratings-changelog.xml" relativeToChangelogFile="true"/>

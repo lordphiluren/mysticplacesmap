@@ -15,22 +15,24 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class PlaceRatingKey implements Serializable {
-    @Column(name = "user_id")
-    private Long userId;
+public class PlaceTagKey implements Serializable {
     @Column(name = "place_id")
     private Long placeId;
+    @Column(name = "tag")
+    private String tag;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlaceRatingKey that = (PlaceRatingKey) o;
-        return Objects.equals(userId, that.userId) &&
+        PlaceTagKey that = (PlaceTagKey) o;
+        return Objects.equals(tag, that.tag) &&
                 Objects.equals(placeId, that.placeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, placeId);
+        return Objects.hash(tag, placeId);
     }
+
 }

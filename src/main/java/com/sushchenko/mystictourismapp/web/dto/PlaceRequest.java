@@ -3,12 +3,10 @@ package com.sushchenko.mystictourismapp.web.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sushchenko.mystictourismapp.entity.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -37,5 +35,5 @@ public class PlaceRequest {
     private Double latitude;
     @NotNull(message = "Longitude cannot be empty")
     private Double longitude;
-    private Set<Tag> tags;
+    private Set<String> tags;
 }

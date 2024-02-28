@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,7 +54,8 @@ public class PlacesController {
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
-        placeService.add(place);
+        place = placeService.add(place);
+        placeService.addTagsToPlace(place, placeDto.getTags());
         return ResponseEntity.ok("Place successfully added");
     }
     @GetMapping("/{id}")
@@ -88,7 +90,7 @@ public class PlacesController {
                                                @Valid @RequestBody CommentRequest commentDTO,
                                                @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeService.getById(id);
-        List<Comment> comments = place.getComments();
+        Set<Comment> comments = place.getComments();
 
         Comment comment = commentMapper.toEntity(commentDTO);
         comment.setCreator(userPrincipal.getUser());

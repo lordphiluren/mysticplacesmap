@@ -68,19 +68,14 @@ public class Place {
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "place_tag",
-            joinColumns = { @JoinColumn(name = "place_id") },
-            inverseJoinColumns = { @JoinColumn(name = "tag_id") }
-    )
-    private Set<Tag> tags;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<PlaceTag> tags;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
-    private List<PlaceRating> placeRatings;
+    private Set<PlaceRating> placeRates;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -88,5 +83,5 @@ public class Place {
             joinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") }
     )
-    private List<Attachment> attachments;
+    private Set<Attachment> attachments;
 }

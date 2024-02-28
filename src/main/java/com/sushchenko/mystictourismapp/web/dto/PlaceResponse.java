@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.sushchenko.mystictourismapp.entity.Attachment;
-import com.sushchenko.mystictourismapp.entity.Tag;
 import com.sushchenko.mystictourismapp.entity.enums.Status;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
@@ -33,7 +31,7 @@ public class PlaceResponse {
     private Double longitude;
     private Status status;
     private Date createdAt;
-    private Set<Tag> tags;
+    private Set<String> tags;
     private List<Attachment> attachments;
     //private List<CommentResponse> comments;
 }
