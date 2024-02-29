@@ -7,6 +7,8 @@ import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,26 +26,21 @@ public class PlaceService {
         place.setStatus(Status.UNCONFIRMED);
         place.setComments(Collections.emptySet());
         place.setCreatedAt(new Date());
-        if(place.getRating() == null) {
-            place.setRating(0.0);
-            place = placeRepo.save(place);
-        } else {
-            place = placeRepo.save(place);
-            addPlaceRating(place);
-        }
+        place = placeRepo.save(place);
         return place;
     }
-    // TODO
-    // Убрать у тегов айди, сделать ключом имя и сделать сущность Place_Tag с айди места имя тега
-    // TODO
-    // Add sorting by name, rating, tags
-    // Add pagination
+    @Transactional
+    public List<Place> getAll(Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        return placeRepo.findAll(pageable).getContent();
+    }
     @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll();
     }
+
     @Transactional
-    public List<Place> getAllByTags(List<String> tags) {
+    public List<Place> getAllByTags(Set<String> tags) {
         return placeRepo.findByTagsIn(tags);
     }
     @Transactional

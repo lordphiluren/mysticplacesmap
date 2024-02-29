@@ -36,18 +36,15 @@ public class PlacesController {
     private final PlaceMapper placeMapper;
     private final UserMapper userMapper;
     @GetMapping()
-    public List<PlaceResponse> getPlaces(@RequestParam(name = "tags", required = false) List<String> tags) {
-        if(tags == null) {
-            return placeService.getAll()
-                    .stream()
-                    .map(placeMapper::toDto)
-                    .collect(Collectors.toList());
-       } else {
-            return placeService.getAllByTags(tags)
-                    .stream()
-                    .map(placeMapper::toDto)
-                    .collect(Collectors.toList());
-       }
+    public List<PlaceResponse> getPlaces(@RequestParam(name = "offset", required = false) Integer offset,
+                                         @RequestParam(name = "limit", required = false) Integer limit) {
+        List<Place> places;
+        if(offset != null && limit != null) {
+            places = placeService.getAll(offset, limit);
+        } else {
+            places = placeService.getAll();
+        }
+        return places.stream().map(placeMapper::toDto).collect(Collectors.toList());
     }
     @PostMapping()
     public ResponseEntity<?> addPlace(@Valid @RequestBody PlaceRequest placeDto,
@@ -55,6 +52,7 @@ public class PlacesController {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
         place = placeService.add(place);
+        placeService.addPlaceRating(place);
         placeService.addTagsToPlace(place, placeDto.getTags());
         return ResponseEntity.ok("Place successfully added");
     }
@@ -102,25 +100,25 @@ public class PlacesController {
     }
 
     // Exception Handling
-//    @ExceptionHandler
-//    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-//        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
-//                System.currentTimeMillis());
-//        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-//        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-//        return new ResponseEntity<>(errorResponse, httpStatus);
-//    }
-    // validation exception handler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String, String> handleValidationExceptions(
-//            MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return errors;
-//    }
+    @ExceptionHandler
+    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
+        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
+                System.currentTimeMillis());
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
+        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+    // Validation exception handler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 }

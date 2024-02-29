@@ -56,13 +56,13 @@ class PlaceServiceTest {
     void giveListOfTags_whenGetAllByTags_thenReturnPlacesWithTags() {
         // given
         List<Place> places = new ArrayList<>();
-        when(placeRepo.findByTagsIn(anyList())).thenReturn(places);
+        when(placeRepo.findByTagsIn(anySet())).thenReturn(places);
 
         // when
-        placeService.getAllByTags(anyList());
+        placeService.getAllByTags(anySet());
 
         // then
-        verify(placeRepo, times(1)).findByTagsIn(Collections.emptyList());
+        verify(placeRepo, times(1)).findByTagsIn(Collections.emptySet());
     }
 
     @Test
