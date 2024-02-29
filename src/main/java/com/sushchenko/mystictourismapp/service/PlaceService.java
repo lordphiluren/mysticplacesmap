@@ -9,6 +9,7 @@ import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +32,12 @@ public class PlaceService {
     }
     @Transactional
     public List<Place> getAll(Integer offset, Integer limit) {
-        Pageable pageable = PageRequest.of(offset, limit);
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id"));
         return placeRepo.findAll(pageable).getContent();
     }
     @Transactional
     public List<Place> getAll() {
-        return placeRepo.findAll();
+        return placeRepo.findAll(Sort.by("id"));
     }
 
     @Transactional

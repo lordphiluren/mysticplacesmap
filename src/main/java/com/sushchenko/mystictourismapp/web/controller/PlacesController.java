@@ -37,12 +37,13 @@ public class PlacesController {
     private final UserMapper userMapper;
     @GetMapping()
     public List<PlaceResponse> getPlaces(@RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "limit", required = false) Integer limit) {
+                                         @RequestParam(name = "limit", required = false) Integer limit,
+                                         @RequestParam(name = "tags", required = false)Set<String> tags) {
         List<Place> places;
         if(offset != null && limit != null) {
             places = placeService.getAll(offset, limit);
         } else {
-            places = placeService.getAll();
+            places = placeService.getAllByTags(tags);
         }
         return places.stream().map(placeMapper::toDto).collect(Collectors.toList());
     }
