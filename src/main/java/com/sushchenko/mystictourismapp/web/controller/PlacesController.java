@@ -3,13 +3,12 @@ package com.sushchenko.mystictourismapp.web.controller;
 import com.sushchenko.mystictourismapp.entity.Comment;
 import com.sushchenko.mystictourismapp.entity.Place;
 import com.sushchenko.mystictourismapp.entity.PlaceRating;
-import com.sushchenko.mystictourismapp.entity.User;
+import com.sushchenko.mystictourismapp.entity.PlaceRatingKey;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.PlaceService;
 import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mapper.CommentMapper;
 import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
-import com.sushchenko.mystictourismapp.utils.mapper.UserMapper;
 import com.sushchenko.mystictourismapp.utils.validation.UpdateValidation;
 import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
@@ -84,6 +83,8 @@ public class PlacesController {
             return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
         }
     }
+    // TODO
+    // добавить нормальное сообщение об ошибках в случае ошибок уникальности первичного ключа
     @PostMapping("/{id}/rates")
     public ResponseEntity<?> addRating(@PathVariable Long id,
                                        @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
@@ -92,6 +93,22 @@ public class PlacesController {
         placeService.addPlaceRating(place, userPrincipal.getUser(), placeDto.getRating());
         placeService.recalculatePlaceRating(place);
         return ResponseEntity.ok(placeMapper.toDto(place));
+    }
+    @PutMapping("/{id}/rates")
+    public ResponseEntity<?> updateRating(@PathVariable Long id,
+                                          @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
+                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        PlaceRating rating = placeService.getPlaceRating(userPrincipal.getUser().getId(), id);
+        rating.setRate(placeDto.getRating());
+        placeService.updatePlaceRating(rating);
+        return ResponseEntity.ok(placeMapper.toDto(placeService.recalculatePlaceRating(id)));
+    }
+    @DeleteMapping("/{id}/rates")
+    public ResponseEntity<?> deleteRating(@PathVariable Long id,
+                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        placeService.deletePlaceRating(userPrincipal.getUser().getId(), id);
+        placeService.recalculatePlaceRating(id);
+        return ResponseEntity.ok("Rating successfully deleted");
     }
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,

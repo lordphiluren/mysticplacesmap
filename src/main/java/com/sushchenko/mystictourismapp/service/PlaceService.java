@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
+import com.sushchenko.mystictourismapp.utils.exception.PlaceRatingNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,10 +57,35 @@ public class PlaceService {
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
     @Transactional
-    public PlaceRating addPlaceRating(Place place, User user, Double rating) {
+    public void deletePlace(Place place) {
+        placeRepo.delete(place);
+    }
+    @Transactional
+    public void updatePlace(Place place) {
+        placeRepo.save(place);
+    }
+    @Transactional
+    public void addPlaceRating(Place place, User user, Double rating) {
         PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), user.getId());
         PlaceRating rate = new PlaceRating(placeRatingKey, rating, user, place);
-        return placeRatingRepo.save(rate);
+        placeRatingRepo.save(rate);
+    }
+    @Transactional
+    public void updatePlaceRating(PlaceRating rating) {
+        placeRatingRepo.save(rating);
+    }
+    @Transactional
+    public PlaceRating getPlaceRating(Long userId, Long placeId) {
+        PlaceRatingKey id = new PlaceRatingKey(userId, placeId);
+        return placeRatingRepo.findById(id)
+                .orElseThrow(() ->
+                        new PlaceRatingNotFoundException("Rating for place: " +
+                        placeId + " by user: " + userId + " doesn't exist"));
+    }
+    @Transactional
+    public void deletePlaceRating(Long userId, Long placeId) {
+        PlaceRatingKey id = new PlaceRatingKey(userId, placeId);
+        placeRatingRepo.deleteById(id);
     }
     @Transactional
     public void addTagsToPlace(Place place, Set<String> tags) {
@@ -71,14 +97,7 @@ public class PlaceService {
         }
         placeTagRepo.saveAll(savedTags);
     }
-    @Transactional
-    public void deletePlace(Place place) {
-        placeRepo.delete(place);
-    }
-    @Transactional
-    public void updatePlace(Place place) {
-        placeRepo.save(place);
-    }
+
     @Transactional
     public void recalculatePlaceRating(Place place) {
         Double rating = placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
@@ -87,6 +106,16 @@ public class PlaceService {
                 .orElse(0.0);
         place.setRating(rating);
         placeRepo.save(place);
+    }
+    @Transactional
+    public Place recalculatePlaceRating(Long placeId) {
+        Place place = placeRepo.findById(placeId).orElseThrow(() -> new PlaceNotFoundException("Place with id: " + placeId + " doesn't exist"));
+        Double rating = placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
+                .mapToDouble(PlaceRating::getRate)
+                .average()
+                .orElse(0.0);
+        place.setRating(rating);
+        return placeRepo.save(place);
     }
     public boolean checkIfPlaceCreator(User creator, User userPrincipal) {
         return Objects.equals(creator.getId(), userPrincipal.getId());
