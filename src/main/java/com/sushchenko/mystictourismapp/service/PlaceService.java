@@ -7,11 +7,9 @@ import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,11 +55,13 @@ public class PlaceService {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
-    public void addPlaceRating(Place place) {
-        PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), place.getCreator().getId());
-        PlaceRating rate = new PlaceRating(placeRatingKey, place.getRating(), place.getCreator(), place);
-        placeRatingRepo.save(rate);
+    @Transactional
+    public PlaceRating addPlaceRating(Place place, User user, Double rating) {
+        PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), user.getId());
+        PlaceRating rate = new PlaceRating(placeRatingKey, rating, user, place);
+        return placeRatingRepo.save(rate);
     }
+    @Transactional
     public void addTagsToPlace(Place place, Set<String> tags) {
         Set<PlaceTag> savedTags = new HashSet<>();
         for(String tag : tags) {
@@ -77,15 +77,16 @@ public class PlaceService {
     }
     @Transactional
     public void updatePlace(Place place) {
-        Double updatedRating = countPlaceRating(place);
-        place.setRating(updatedRating);
         placeRepo.save(place);
     }
-    private Double countPlaceRating(Place place) {
-        return placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
+    @Transactional
+    public void recalculatePlaceRating(Place place) {
+        Double rating = placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
                 .mapToDouble(PlaceRating::getRate)
                 .average()
                 .orElse(0.0);
+        place.setRating(rating);
+        placeRepo.save(place);
     }
     public boolean checkIfPlaceCreator(User creator, User userPrincipal) {
         return Objects.equals(creator.getId(), userPrincipal.getId());

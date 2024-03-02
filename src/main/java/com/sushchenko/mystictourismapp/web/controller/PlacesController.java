@@ -2,6 +2,7 @@ package com.sushchenko.mystictourismapp.web.controller;
 
 import com.sushchenko.mystictourismapp.entity.Comment;
 import com.sushchenko.mystictourismapp.entity.Place;
+import com.sushchenko.mystictourismapp.entity.PlaceRating;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.PlaceService;
@@ -33,7 +34,6 @@ public class PlacesController {
     private final CommentMapper commentMapper;
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
-    private final UserMapper userMapper;
     @GetMapping()
     public List<PlaceResponse> getPlaces(@RequestParam(name = "tags", required = false) Set<String> tags,
                                          @RequestParam(name = "rating", required = false) Double rating,
@@ -49,7 +49,7 @@ public class PlacesController {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
         Place savedPlace = placeService.add(place);
-        placeService.addPlaceRating(savedPlace);
+        placeService.addPlaceRating(savedPlace, savedPlace.getCreator(), savedPlace.getRating());
         placeService.addTagsToPlace(savedPlace, placeDto.getTags());
         return ResponseEntity.ok(placeMapper.toDto(savedPlace));
     }
@@ -57,11 +57,6 @@ public class PlacesController {
     public PlaceResponse getPlaceById(@PathVariable Long id) {
         return placeMapper.toDto(placeService.getById(id));
     }
-//    @PostMapping("/{id}")
-//    public ResponseEntity<?> addRating(@PathVariable String id, @Valid @RequestBody PlaceRequest placeDto) {
-//        placeService.addRatesById(id, placeDto.getRating());
-//        return ResponseEntity.ok("Rating added");
-//    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlace(@PathVariable Long id,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
@@ -79,13 +74,24 @@ public class PlacesController {
                                          @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeService.getById(id);
+        Double rating = place.getRating();
         placeMapper.mergeDtoIntoEntity(placeDto, place);
         if(placeService.checkIfPlaceCreator(place.getCreator(), userPrincipal.getUser())) {
+            place.setRating(rating);
             placeService.updatePlace(place);
             return ResponseEntity.ok("Place successfully updated");
         } else {
             return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
         }
+    }
+    @PostMapping("/{id}/rates")
+    public ResponseEntity<?> addRating(@PathVariable Long id,
+                                       @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
+                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Place place = placeService.getById(id);
+        placeService.addPlaceRating(place, userPrincipal.getUser(), placeDto.getRating());
+        placeService.recalculatePlaceRating(place);
+        return ResponseEntity.ok(placeMapper.toDto(place));
     }
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
