@@ -7,9 +7,11 @@ import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,18 +33,23 @@ public class PlaceService {
         return place;
     }
     @Transactional
-    public List<Place> getAll(Integer offset, Integer limit) {
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("id"));
-        return placeRepo.findAll(pageable).getContent();
-    }
-    @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll(Sort.by("id"));
     }
-
     @Transactional
-    public List<Place> getAllByTags(Set<String> tags) {
-        return placeRepo.findByTagsIn(tags);
+    public List<Place> getAllByFilter(Set<String> tags, Double rating, Integer offset, Integer limit) {
+        int offsetValue = offset != null ? offset : 0;
+        int limitValue = limit != null ? limit : Integer.MAX_VALUE;
+        Pageable pageable = PageRequest.of(offsetValue, limitValue, Sort.by("id"));
+        if(tags != null && rating != null) {
+            return placeRepo.findByTagsAndRating(tags, rating, pageable).getContent();
+        } else if(tags != null) {
+            return placeRepo.findByTagsIn(tags, pageable).getContent();
+        } else if(rating != null) {
+            return placeRepo.findAllByRating(rating, pageable).getContent();
+        } else {
+            return placeRepo.findAll(pageable).getContent();
+        }
     }
     @Transactional
     public Place getById(Long id) {

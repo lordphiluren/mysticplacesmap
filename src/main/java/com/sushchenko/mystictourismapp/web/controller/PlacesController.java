@@ -21,10 +21,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,16 +33,13 @@ public class PlacesController {
     private final PlaceMapper placeMapper;
     private final UserMapper userMapper;
     @GetMapping()
-    public List<PlaceResponse> getPlaces(@RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "limit", required = false) Integer limit,
-                                         @RequestParam(name = "tags", required = false)Set<String> tags) {
-        List<Place> places;
-        if(offset != null && limit != null) {
-            places = placeService.getAll(offset, limit);
-        } else {
-            places = placeService.getAllByTags(tags);
-        }
-        return places.stream().map(placeMapper::toDto).collect(Collectors.toList());
+    public List<PlaceResponse> getPlaces(@RequestParam(name = "tags", required = false) Set<String> tags,
+                                         @RequestParam(name = "rating", required = false) Double rating,
+                                         @RequestParam(name = "offset", required = false) Integer offset,
+                                         @RequestParam(name = "limit", required = false) Integer limit) {
+        return placeService.getAllByFilter(tags, rating, offset, limit).stream()
+                .map(placeMapper::toDto)
+                .collect(Collectors.toList());
     }
     @PostMapping()
     public ResponseEntity<?> addPlace(@Valid @RequestBody PlaceRequest placeDto,
