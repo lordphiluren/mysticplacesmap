@@ -27,8 +27,10 @@ public class PlaceService {
     @Transactional
     public Place add(Place place) {
         place.setStatus(Status.UNCONFIRMED);
-        place.setComments(Collections.emptySet());
+        place.setComments(new HashSet<>());
         place.setCreatedAt(new Date());
+        place.setPlaceRates(new HashSet<>());
+        place.setTags(new HashSet<>());
         place = placeRepo.save(place);
         return place;
     }
@@ -57,19 +59,16 @@ public class PlaceService {
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
     private double countPlaceRating(Place place) {
-        // Мб юзать геттер плейс рейтс
         return placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
                 .mapToDouble(PlaceRating::getRate)
                 .average()
                 .orElse(0.0);
     }
-    @Transactional
     public void addPlaceRating(Place place) {
         PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), place.getCreator().getId());
         PlaceRating rate = new PlaceRating(placeRatingKey, place.getRating(), place.getCreator(), place);
         placeRatingRepo.save(rate);
     }
-    @Transactional
     public void addTagsToPlace(Place place, Set<String> tags) {
         Set<PlaceTag> savedTags = new HashSet<>();
         for(String tag : tags) {

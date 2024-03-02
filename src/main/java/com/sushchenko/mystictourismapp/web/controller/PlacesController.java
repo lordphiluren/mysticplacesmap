@@ -46,10 +46,10 @@ public class PlacesController {
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         Place place = placeMapper.toEntity(placeDto);
         place.setCreator(userPrincipal.getUser());
-        place = placeService.add(place);
-        placeService.addPlaceRating(place);
-        placeService.addTagsToPlace(place, placeDto.getTags());
-        return ResponseEntity.ok("Place successfully added");
+        Place savedPlace = placeService.add(place);
+        placeService.addPlaceRating(savedPlace);
+        placeService.addTagsToPlace(savedPlace, placeDto.getTags());
+        return ResponseEntity.ok(placeMapper.toDto(savedPlace));
     }
     @GetMapping("/{id}")
     public PlaceResponse getPlaceById(@PathVariable Long id) {

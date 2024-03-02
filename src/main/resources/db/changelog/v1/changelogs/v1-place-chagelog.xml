@@ -19,7 +19,7 @@
                 <constraints primaryKey="true" nullable="false"  />
             </column>
             <column name="name" type="varchar(128)">
-                <constraints unique="true" nullable="false" />
+                <constraints nullable="false" />
             </column>
             <column name="short_description" type="varchar" />
             <column name="full_description" type="varchar" />
