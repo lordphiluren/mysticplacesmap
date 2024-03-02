@@ -31,8 +31,7 @@ public class PlaceService {
         place.setCreatedAt(new Date());
         place.setPlaceRates(new HashSet<>());
         place.setTags(new HashSet<>());
-        place = placeRepo.save(place);
-        return place;
+        return placeRepo.save(place);
     }
     @Transactional
     public List<Place> getAll() {
@@ -58,12 +57,6 @@ public class PlaceService {
         return placeRepo.findById(id)
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
-    private double countPlaceRating(Place place) {
-        return placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
-                .mapToDouble(PlaceRating::getRate)
-                .average()
-                .orElse(0.0);
-    }
     public void addPlaceRating(Place place) {
         PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), place.getCreator().getId());
         PlaceRating rate = new PlaceRating(placeRatingKey, place.getRating(), place.getCreator(), place);
@@ -84,6 +77,17 @@ public class PlaceService {
     }
     @Transactional
     public void updatePlace(Place place) {
+        Double updatedRating = countPlaceRating(place);
+        place.setRating(updatedRating);
         placeRepo.save(place);
+    }
+    private Double countPlaceRating(Place place) {
+        return placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
+                .mapToDouble(PlaceRating::getRate)
+                .average()
+                .orElse(0.0);
+    }
+    public boolean checkIfPlaceCreator(User creator, User userPrincipal) {
+        return Objects.equals(creator.getId(), userPrincipal.getId());
     }
 }

@@ -7,6 +7,7 @@ import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceResponse;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -37,5 +38,9 @@ public class PlaceMapper {
     }
     public Place toEntity(PlaceRequest placeDto) {
         return modelMapper.map(placeDto, Place.class);
+    }
+    public void mergeDtoIntoEntity(PlaceRequest placeDto, Place place) {
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(placeDto, place);
     }
 }

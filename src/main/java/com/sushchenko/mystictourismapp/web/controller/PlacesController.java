@@ -9,6 +9,7 @@ import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.utils.mapper.CommentMapper;
 import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
 import com.sushchenko.mystictourismapp.utils.mapper.UserMapper;
+import com.sushchenko.mystictourismapp.utils.validation.UpdateValidation;
 import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceResponse;
@@ -18,6 +19,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,23 +62,30 @@ public class PlacesController {
 //        placeService.addRatesById(id, placeDto.getRating());
 //        return ResponseEntity.ok("Rating added");
 //    }
-    // TODO
-    // add checking if user is creator
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePlace(@PathVariable Long id) {
-        placeService.deletePlace(placeService.getById(id));
-        return ResponseEntity.ok("Place successfully deleted");
+    public ResponseEntity<?> deletePlace(@PathVariable Long id,
+                                         @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Place place = placeService.getById(id);
+        if(placeService.checkIfPlaceCreator(place.getCreator(), userPrincipal.getUser())) {
+            placeService.deletePlace(place);
+            return ResponseEntity.ok("Place successfully deleted");
+        } else {
+            return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
+        }
     }
-    // TODO
-    // add checking if user is creator
+    @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlace(@PathVariable Long id,
-                                         @Valid @RequestBody PlaceRequest placeDto) {
-        Place place = placeMapper.toEntity(placeDto);
-        place.setId(id);
-        place.setCreator(userMapper.toEntity(placeDto.getCreator()));
-        placeService.updatePlace(place);
-        return ResponseEntity.ok("Place successfully updated");
+                                         @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
+                                         @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Place place = placeService.getById(id);
+        placeMapper.mergeDtoIntoEntity(placeDto, place);
+        if(placeService.checkIfPlaceCreator(place.getCreator(), userPrincipal.getUser())) {
+            placeService.updatePlace(place);
+            return ResponseEntity.ok("Place successfully updated");
+        } else {
+            return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
+        }
     }
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
