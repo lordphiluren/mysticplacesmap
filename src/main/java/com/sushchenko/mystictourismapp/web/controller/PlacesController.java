@@ -125,7 +125,8 @@ public class PlacesController {
         placeService.updatePlace(place);
         return ResponseEntity.ok("Comment successfully added");
     }
-
+    // TODO
+    // ВЫНЕСТИ ЭТОТ КАЛ В КОНТРОЛЛЕР ЭДВАЙС
     // Exception Handling
     @ExceptionHandler
     private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
