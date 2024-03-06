@@ -18,6 +18,6 @@ public class UserMapper {
     public UserResponse toDto(User user) {
         return modelMapper.map(user, UserResponse.class);
     }
-    public void mergeDtoIntoEntity()
+//    public void mergeDtoIntoEntity()
 
 }
