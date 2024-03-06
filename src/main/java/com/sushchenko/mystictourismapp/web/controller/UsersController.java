@@ -38,28 +38,4 @@ public class UsersController {
         userService.update(user);
         return ResponseEntity.ok("User info successfully updated");
     }
-
-    // Exception Handling
-
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
-                System.currentTimeMillis());
-        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
-    // validation exception handler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 }
