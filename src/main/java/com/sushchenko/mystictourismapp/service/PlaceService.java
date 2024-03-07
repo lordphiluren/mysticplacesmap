@@ -7,6 +7,8 @@ import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceRatingNotFoundException;
+import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
+import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,34 +24,37 @@ public class PlaceService {
     private final PlaceRepo placeRepo;
     private final PlaceRatingRepo placeRatingRepo;
     private final PlaceTagRepo placeTagRepo;
-
+    private final PlaceMapper placeMapper;
     @Transactional
-    public Place add(Place place) {
-        place.setStatus(Status.UNCONFIRMED);
-        place.setComments(new HashSet<>());
-        place.setCreatedAt(new Date());
-        place.setPlaceRates(new HashSet<>());
-        place.setTags(new HashSet<>());
-        return placeRepo.save(place);
+    public Place add(PlaceRequest placeDto, User user) {
+        Place place = placeMapper.toEntity(placeDto);
+        enrichPlace(place);
+        place.setCreator(user);
+        Place savedPlace = placeRepo.save(place);
+        addPlaceRating(savedPlace, savedPlace.getCreator(), savedPlace.getRating());
+        addTagsToPlace(savedPlace, placeDto.getTags());
+        return savedPlace;
     }
     @Transactional
     public List<Place> getAll() {
         return placeRepo.findAll(Sort.by("id"));
     }
     @Transactional
+    // ИСПРАВИТЬ ПРОСТО КИДАТЬ В БОЛЬШОЙ САМЫЙ МЕТОД
     public List<Place> getAllByFilter(Set<String> tags, Double rating, Integer offset, Integer limit) {
         int offsetValue = offset != null ? offset : 0;
         int limitValue = limit != null ? limit : Integer.MAX_VALUE;
         Pageable pageable = PageRequest.of(offsetValue, limitValue, Sort.by("id"));
-        if(tags != null && rating != null) {
-            return placeRepo.findByTagsAndRating(tags, rating, pageable).getContent();
-        } else if(tags != null) {
-            return placeRepo.findByTagsIn(tags, pageable).getContent();
-        } else if(rating != null) {
-            return placeRepo.findAllByRating(rating, pageable).getContent();
-        } else {
-            return placeRepo.findAll(pageable).getContent();
-        }
+        return placeRepo.findByTagsAndRating(tags, rating, pageable).getContent();
+//        if(tags != null && rating != null) {
+//
+//        } else if(tags != null) {
+//            return placeRepo.findByTagsIn(tags, pageable).getContent();
+//        } else if(rating != null) {
+//            return placeRepo.findAllByRating(rating, pageable).getContent();
+//        } else {
+//            return placeRepo.findAll(pageable).getContent();
+//        }
     }
     @Transactional
     public Place getById(Long id) {
@@ -68,6 +73,7 @@ public class PlaceService {
     public void addPlaceRating(Place place, User user, Double rating) {
         PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), user.getId());
         PlaceRating rate = new PlaceRating(placeRatingKey, rating, user, place);
+        place.setRating(rating);
         placeRatingRepo.save(rate);
     }
     @Transactional
@@ -95,6 +101,7 @@ public class PlaceService {
             PlaceTag placeTag = new PlaceTag(placeTagKey, place);
             savedTags.add(placeTag);
         }
+        place.setTags(savedTags);
         placeTagRepo.saveAll(savedTags);
     }
 
@@ -119,5 +126,12 @@ public class PlaceService {
     }
     public boolean checkIfPlaceCreator(User creator, User userPrincipal) {
         return Objects.equals(creator.getId(), userPrincipal.getId());
+    }
+    private void enrichPlace(Place place) {
+        place.setStatus(Status.UNCONFIRMED);
+        place.setComments(new HashSet<>());
+        place.setCreatedAt(new Date());
+        place.setPlaceRates(new HashSet<>());
+        place.setTags(new HashSet<>());
     }
 }
