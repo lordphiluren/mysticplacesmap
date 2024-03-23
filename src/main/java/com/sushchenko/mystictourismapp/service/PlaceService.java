@@ -5,6 +5,7 @@ import com.sushchenko.mystictourismapp.entity.enums.Status;
 import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
+import com.sushchenko.mystictourismapp.repo.specification.PlaceSpecification;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceRatingNotFoundException;
 import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -36,16 +38,13 @@ public class PlaceService {
         return savedPlace;
     }
     @Transactional
-    public List<Place> getAll() {
-        return placeRepo.findAll(Sort.by("id"));
-    }
-    @Transactional
-    // ИСПРАВИТЬ ПРОСТО КИДАТЬ В БОЛЬШОЙ САМЫЙ МЕТОД
-    public List<Place> getAllByFilter(Set<String> tags, Double rating, Integer offset, Integer limit) {
+    public List<Place> getAllByFilter(Double ratingStart, Double ratingEnd, String name,
+                                      Set<String> tags, Integer offset, Integer limit) {
         int offsetValue = offset != null ? offset : 0;
         int limitValue = limit != null ? limit : Integer.MAX_VALUE;
         Pageable pageable = PageRequest.of(offsetValue, limitValue, Sort.by("id"));
-        return placeRepo.findByTagsAndRating(tags, rating, pageable).getContent();
+        return placeRepo.findAll(PlaceSpecification.filterPlaces(ratingStart, ratingEnd, name, tags), pageable)
+                .getContent();
 //        if(tags != null && rating != null) {
 //
 //        } else if(tags != null) {

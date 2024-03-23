@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/places")
 @RequiredArgsConstructor
@@ -34,11 +33,13 @@ public class PlacesController {
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
     @GetMapping()
-    public List<PlaceResponse> getPlaces(@RequestParam(name = "tags", required = false) Set<String> tags,
-                                         @RequestParam(name = "rating", required = false) Double rating,
+    public List<PlaceResponse> getPlaces(@RequestParam(name = "ratingStart", required = false) Double ratingStart,
+                                         @RequestParam(name = "ratingEnd", required = false) Double ratingEnd,
+                                         @RequestParam(name = "name", required = false) String name,
+                                         @RequestParam(name = "tags", required = false) Set<String> tags,
                                          @RequestParam(name = "offset", required = false) Integer offset,
                                          @RequestParam(name = "limit", required = false) Integer limit) {
-        return placeService.getAllByFilter(tags, rating, offset, limit).stream()
+        return placeService.getAllByFilter(ratingStart, ratingEnd, name, tags, offset, limit).stream()
                 .map(placeMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -62,6 +63,7 @@ public class PlacesController {
             return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
         }
     }
+    // refactor TODO
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlace(@PathVariable Long id,

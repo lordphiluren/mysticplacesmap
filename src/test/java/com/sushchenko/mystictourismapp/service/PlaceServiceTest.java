@@ -38,32 +38,6 @@ class PlaceServiceTest {
         assertEquals(place.getRating(), 0);
     }
 
-    @Test
-    void whenGetAll_thenReturnAllPlaces() {
-        // given
-        List<Place> places = new ArrayList<>();
-
-        // when
-        when(placeRepo.findAll()).thenReturn(places);
-        placeService.getAll();
-
-        // then
-        verify(placeRepo, times(1)).findAll();
-        verifyNoMoreInteractions(placeRepo);
-    }
-
-    @Test
-    void giveListOfTags_whenGetAllByTags_thenReturnPlacesWithTags() {
-//        // given
-//        List<Place> places = new ArrayList<>();
-//        when(placeRepo.findByTagsIn(anySet())).thenReturn(places);
-//
-//        // when
-//        placeService.getAllByTags(anySet());
-//
-//        // then
-//        verify(placeRepo, times(1)).findByTagsIn(Collections.emptySet());
-    }
 
     @Test
     void givePlaceId_whenGetById_thenReturnPlace() {
