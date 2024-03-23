@@ -4,12 +4,8 @@ import com.sushchenko.mystictourismapp.entity.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 @NamedEntityGraph(
     name = "place-entity-graph-user_tags_attachs_comments",

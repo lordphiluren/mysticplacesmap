@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.repo.specification.PlaceSpecification;
+import com.sushchenko.mystictourismapp.utils.exception.NotEnoughPermissionsException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceRatingNotFoundException;
 import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
@@ -45,15 +46,6 @@ public class PlaceService {
         Pageable pageable = PageRequest.of(offsetValue, limitValue, Sort.by("id"));
         return placeRepo.findAll(PlaceSpecification.filterPlaces(ratingStart, ratingEnd, name, tags), pageable)
                 .getContent();
-//        if(tags != null && rating != null) {
-//
-//        } else if(tags != null) {
-//            return placeRepo.findByTagsIn(tags, pageable).getContent();
-//        } else if(rating != null) {
-//            return placeRepo.findAllByRating(rating, pageable).getContent();
-//        } else {
-//            return placeRepo.findAll(pageable).getContent();
-//        }
     }
     @Transactional
     public Place getById(Long id) {
@@ -61,36 +53,62 @@ public class PlaceService {
                 .orElseThrow(()-> new PlaceNotFoundException("Place with id: " + id + " doesn't exist"));
     }
     @Transactional
-    public void deletePlace(Place place) {
-        placeRepo.delete(place);
+    public void deletePlace(Long id, User creator) {
+        Place place = getById(id);
+        if(checkIfPlaceCreator(place.getCreator(), creator)) {
+            placeRepo.deleteById(id);
+        } else {
+            throw new NotEnoughPermissionsException("User with id:" + creator.getId() +
+                    " is not allowed to modify this place");
+        }
     }
     @Transactional
-    public void updatePlace(Place place) {
-        placeRepo.save(place);
+    public void updatePlace(Long id, PlaceRequest placeDto, User creator) {
+        Place place = getById(id);
+        Double rating = place.getRating();
+        placeMapper.mergeDtoIntoEntity(placeDto, place);
+        if(checkIfPlaceCreator(place.getCreator(), creator)) {
+            place.setRating(rating);
+            placeRepo.save(place);
+        } else {
+            throw new NotEnoughPermissionsException("User with id:" + creator.getId() +
+                    " is not allowed to modify this place");
+        }
+    }
+    @Transactional
+    public Place addRates(Long id, User user, Double rating) {
+        Place place = getById(id);
+        addPlaceRating(place, user, rating);
+        return place;
     }
     @Transactional
     public void addPlaceRating(Place place, User user, Double rating) {
-        PlaceRatingKey placeRatingKey = new PlaceRatingKey(place.getId(), user.getId());
+        PlaceRatingKey placeRatingKey = new PlaceRatingKey(user.getId(), place.getId());
         PlaceRating rate = new PlaceRating(placeRatingKey, rating, user, place);
         place.setRating(rating);
         placeRatingRepo.save(rate);
     }
     @Transactional
-    public void updatePlaceRating(PlaceRating rating) {
-        placeRatingRepo.save(rating);
+    public Place updatePlaceRating(Long placeId, User creator, Double rate) {
+        PlaceRatingKey id = new PlaceRatingKey(creator.getId(), placeId);
+        PlaceRating rating = getPlaceRating(id);
+        rating.setRate(rate);
+        PlaceRating placeRating = placeRatingRepo.save(rating);
+        return recalculatePlaceRating(placeRating.getPlace());
     }
     @Transactional
-    public PlaceRating getPlaceRating(Long userId, Long placeId) {
-        PlaceRatingKey id = new PlaceRatingKey(userId, placeId);
+    public PlaceRating getPlaceRating(PlaceRatingKey id) {
         return placeRatingRepo.findById(id)
                 .orElseThrow(() ->
                         new PlaceRatingNotFoundException("Rating for place: " +
-                        placeId + " by user: " + userId + " doesn't exist"));
+                        id.getPlaceId() + " by user: " + id.getUserId() + " doesn't exist"));
     }
     @Transactional
-    public void deletePlaceRating(Long userId, Long placeId) {
-        PlaceRatingKey id = new PlaceRatingKey(userId, placeId);
+    public PlaceRating deletePlaceRating(Long placeId, User creator) {
+        PlaceRatingKey id = new PlaceRatingKey(creator.getId(), placeId);
+        PlaceRating rating = getPlaceRating(id);
         placeRatingRepo.deleteById(id);
+        return rating;
     }
     @Transactional
     public void addTagsToPlace(Place place, Set<String> tags) {
@@ -105,25 +123,15 @@ public class PlaceService {
     }
 
     @Transactional
-    public void recalculatePlaceRating(Place place) {
-        Double rating = placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
-                .mapToDouble(PlaceRating::getRate)
-                .average()
-                .orElse(0.0);
-        place.setRating(rating);
-        placeRepo.save(place);
-    }
-    @Transactional
-    public Place recalculatePlaceRating(Long placeId) {
-        Place place = placeRepo.findById(placeId).orElseThrow(() -> new PlaceNotFoundException("Place with id: " + placeId + " doesn't exist"));
-        Double rating = placeRatingRepo.findPlaceRatingByPlaceId(place.getId()).stream()
+    public Place recalculatePlaceRating(Place place) {
+        Double rating = place.getPlaceRates().stream()
                 .mapToDouble(PlaceRating::getRate)
                 .average()
                 .orElse(0.0);
         place.setRating(rating);
         return placeRepo.save(place);
     }
-    public boolean checkIfPlaceCreator(User creator, User userPrincipal) {
+    private boolean checkIfPlaceCreator(User creator, User userPrincipal) {
         return Objects.equals(creator.getId(), userPrincipal.getId());
     }
     private void enrichPlace(Place place) {

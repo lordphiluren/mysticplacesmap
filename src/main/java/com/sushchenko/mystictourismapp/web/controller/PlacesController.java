@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/places")
 @RequiredArgsConstructor
 public class PlacesController {
-    private final CommentMapper commentMapper;
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
     @GetMapping()
@@ -55,13 +54,8 @@ public class PlacesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePlace(@PathVariable Long id,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Place place = placeService.getById(id);
-        if(placeService.checkIfPlaceCreator(place.getCreator(), userPrincipal.getUser())) {
-            placeService.deletePlace(place);
-            return ResponseEntity.ok("Place successfully deleted");
-        } else {
-            return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
-        }
+        placeService.deletePlace(id, userPrincipal.getUser());
+        return ResponseEntity.ok("Place successfully deleted");
     }
     // refactor TODO
     @PatchMapping("/{id}")
@@ -69,57 +63,48 @@ public class PlacesController {
     public ResponseEntity<?> updatePlace(@PathVariable Long id,
                                          @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Place place = placeService.getById(id);
-        Double rating = place.getRating();
-        placeMapper.mergeDtoIntoEntity(placeDto, place);
-        if(placeService.checkIfPlaceCreator(place.getCreator(), userPrincipal.getUser())) {
-            place.setRating(rating);
-            placeService.updatePlace(place);
-            return ResponseEntity.ok("Place successfully updated");
-        } else {
-            return new ResponseEntity<>("User is not allowed to modify this place", HttpStatus.FORBIDDEN);
-        }
+        placeService.updatePlace(id, placeDto, userPrincipal.getUser());
+        return ResponseEntity.ok("Place successfully updated");
     }
-    // TODO
-    // добавить нормальное сообщение об ошибках в случае ошибок уникальности первичного ключа
     @PostMapping("/{id}/rates")
     public ResponseEntity<?> addRating(@PathVariable Long id,
                                        @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
                                        @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Place place = placeService.getById(id);
-        placeService.addPlaceRating(place, userPrincipal.getUser(), placeDto.getRating());
-        placeService.recalculatePlaceRating(place);
-        return ResponseEntity.ok(placeMapper.toDto(place));
+        Place place = placeService.addRates(id, userPrincipal.getUser(), placeDto.getRating());
+        return ResponseEntity.ok(placeMapper.toDto(
+                placeService.recalculatePlaceRating(place))
+        );
     }
     @PutMapping("/{id}/rates")
     public ResponseEntity<?> updateRating(@PathVariable Long id,
                                           @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
                                           @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        PlaceRating rating = placeService.getPlaceRating(userPrincipal.getUser().getId(), id);
-        rating.setRate(placeDto.getRating());
-        placeService.updatePlaceRating(rating);
-        return ResponseEntity.ok(placeMapper.toDto(placeService.recalculatePlaceRating(id)));
+
+        return ResponseEntity.ok(placeMapper.toDto(
+                placeService.updatePlaceRating(id, userPrincipal.getUser(), placeDto.getRating()))
+        );
     }
     @DeleteMapping("/{id}/rates")
     public ResponseEntity<?> deleteRating(@PathVariable Long id,
                                           @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        placeService.deletePlaceRating(userPrincipal.getUser().getId(), id);
-        placeService.recalculatePlaceRating(id);
+        placeService.recalculatePlaceRating(
+                placeService.deletePlaceRating(id, userPrincipal.getUser()).getPlace()
+        );
         return ResponseEntity.ok("Rating successfully deleted");
     }
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
-                                               @Valid @RequestBody CommentRequest commentDTO,
-                                               @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Place place = placeService.getById(id);
-        Set<Comment> comments = place.getComments();
-
-        Comment comment = commentMapper.toEntity(commentDTO);
-        comment.setCreator(userPrincipal.getUser());
-
-        comments.add(comment);
-        place.setComments(comments);
-        placeService.updatePlace(place);
-        return ResponseEntity.ok("Comment successfully added");
-    }
+//    @PostMapping("/{id}/comments")
+//    public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
+//                                               @Valid @RequestBody CommentRequest commentDTO,
+//                                               @AuthenticationPrincipal UserPrincipal userPrincipal) {
+////        Place place = placeService.getById(id);
+////        Set<Comment> comments = place.getComments();
+////
+////        Comment comment = commentMapper.toEntity(commentDTO);
+////        comment.setCreator(userPrincipal.getUser());
+////
+////        comments.add(comment);
+////        place.setComments(comments);
+////        placeService.updatePlace(place);
+////        return ResponseEntity.ok("Comment successfully added");
+//    }
 }
