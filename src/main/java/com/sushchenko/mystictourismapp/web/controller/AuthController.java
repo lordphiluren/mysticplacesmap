@@ -7,6 +7,8 @@ import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.web.dto.AuthRequest;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,21 +26,25 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authorization", description = "Controller for user authorization and authentication using JWT")
 public class AuthController {
     private final AuthService authService;
     private final ModelMapper modelMapper;
+    @Operation(
+            summary = "User login",
+            description = "Handles user authentication"
+    )
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody AuthRequest authRequest) {
         return authService.attemptLogin(authRequest.getUsername(), authRequest.getPassword());
     }
+    @Operation(
+            summary = "User signup",
+            description = "Handles user registration"
+    )
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody AuthRequest authRequest) {
         authService.signUp(modelMapper.map(authRequest, User.class));
         return ResponseEntity.ok("Successful registration");
     }
-    @GetMapping("/me")
-    public UserResponse getAuthUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return modelMapper.map(userPrincipal.getUser(), UserResponse.class);
-    }
-
 }
