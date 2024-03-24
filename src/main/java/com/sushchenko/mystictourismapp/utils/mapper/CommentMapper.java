@@ -5,6 +5,7 @@ import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.CommentResponse;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -21,5 +22,9 @@ public class CommentMapper {
     }
     public Comment toEntity(CommentRequest commentDto) {
         return modelMapper.map(commentDto, Comment.class);
+    }
+    public void mergeDtoIntoEntity(CommentRequest commentDto, Comment comment) {
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(commentDto, comment);
     }
 }

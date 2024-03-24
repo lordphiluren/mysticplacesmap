@@ -33,5 +33,4 @@ public class PlaceResponse {
     private Date createdAt;
     private Set<String> tags;
     private List<Attachment> attachments;
-    //private List<CommentResponse> comments;
 }

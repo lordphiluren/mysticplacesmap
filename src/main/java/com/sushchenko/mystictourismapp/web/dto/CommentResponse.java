@@ -17,7 +17,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommentResponse {
-    private String text;
+    private Long id;
+    private String message;
     private UserResponse creator;
     private Date createdAt;
     private List<Attachment> attachments;

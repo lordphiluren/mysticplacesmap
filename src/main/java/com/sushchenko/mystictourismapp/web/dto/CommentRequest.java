@@ -17,5 +17,5 @@ import lombok.*;
 public class CommentRequest {
     @NotNull(message = "Comment text can not be empty")
     @Size(max = 1024, message = "Comment length should not be greater than 1024 characters")
-    private String text;
+    private String message;
 }

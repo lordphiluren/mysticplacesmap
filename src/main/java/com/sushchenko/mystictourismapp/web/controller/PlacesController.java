@@ -92,19 +92,4 @@ public class PlacesController {
         );
         return ResponseEntity.ok("Rating successfully deleted");
     }
-//    @PostMapping("/{id}/comments")
-//    public ResponseEntity<?> addCommentToPlace(@PathVariable Long id,
-//                                               @Valid @RequestBody CommentRequest commentDTO,
-//                                               @AuthenticationPrincipal UserPrincipal userPrincipal) {
-////        Place place = placeService.getById(id);
-////        Set<Comment> comments = place.getComments();
-////
-////        Comment comment = commentMapper.toEntity(commentDTO);
-////        comment.setCreator(userPrincipal.getUser());
-////
-////        comments.add(comment);
-////        place.setComments(comments);
-////        placeService.updatePlace(place);
-////        return ResponseEntity.ok("Comment successfully added");
-//    }
 }
