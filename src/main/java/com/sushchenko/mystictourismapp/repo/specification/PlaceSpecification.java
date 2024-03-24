@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Set;
 public class PlaceSpecification {
     public static Specification<Place> filterPlaces(Double ratingStart, Double ratingEnd,
-                                                    String name, Set<String> tags) {
+                                                    String name, Set<String> tags, Long userId) {
         Specification<Place> spec = Specification.where(null);
         Double ratingStartValue = ratingStart != null ? ratingStart : Double.valueOf(0);
         Double ratingEndValue = ratingEnd != null ? ratingEnd : Double.valueOf(5);
@@ -17,6 +17,9 @@ public class PlaceSpecification {
         }
         if(tags != null && !tags.isEmpty()) {
             spec = spec.and(tagsIn(tags));
+        }
+        if(userId != null) {
+            spec = spec.and(byUserId(userId));
         }
         spec = spec.and(ratingBetween(ratingStartValue, ratingEndValue));
         return spec;
@@ -33,5 +36,8 @@ public class PlaceSpecification {
             Predicate tagsPredicate = placeTags.in(tags);
             return criteriaBuilder.and(tagsPredicate);
         }));
+    }
+    private static Specification<Place> byUserId(Long userId) {
+        return (((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("creator").get("id"), userId)));
     }
 }

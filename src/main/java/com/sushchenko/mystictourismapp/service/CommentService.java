@@ -4,6 +4,7 @@ import com.sushchenko.mystictourismapp.entity.Comment;
 import com.sushchenko.mystictourismapp.entity.Place;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.repo.CommentRepo;
+import com.sushchenko.mystictourismapp.service.helper.Helper;
 import com.sushchenko.mystictourismapp.utils.exception.CommentNotFoundException;
 import com.sushchenko.mystictourismapp.utils.exception.NotEnoughPermissionsException;
 import com.sushchenko.mystictourismapp.utils.mapper.CommentMapper;
@@ -48,7 +49,7 @@ public class CommentService {
     @Transactional
     public Comment updateComment(Long id, CommentRequest commentDto, User creator) {
         Comment comment = getCommentById(id);
-        if(checkIfCommentCreator(comment.getCreator(), creator)) {
+        if(Helper.checkUserPermissions(comment.getCreator(), creator)) {
             commentMapper.mergeDtoIntoEntity(commentDto, comment);
             comment = commentRepo.save(comment);
         } else {
@@ -60,14 +61,11 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long id, User creator) {
         Comment comment = getCommentById(id);
-        if(checkIfCommentCreator(comment.getCreator(), creator)) {
+        if(Helper.checkUserPermissions(comment.getCreator(), creator)) {
             commentRepo.delete(comment);
         } else {
             throw new NotEnoughPermissionsException("User with id: " + creator.getId() +
                     " is not allowed to modify comment with id: " + id);
         }
-    }
-    private boolean checkIfCommentCreator(User creator, User userPrincipal) {
-        return Objects.equals(creator.getId(), userPrincipal.getId());
     }
 }

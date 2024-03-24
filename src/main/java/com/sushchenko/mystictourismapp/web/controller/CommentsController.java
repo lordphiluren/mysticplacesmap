@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/places/{placeId}/comments")
+@RequestMapping("/api/v1/places/{placeId}/comments")
 @RequiredArgsConstructor
 public class CommentsController {
     private final CommentService commentService;

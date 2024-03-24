@@ -23,17 +23,12 @@ public class PlaceMapper {
 
     public PlaceResponse toDto(Place place) {
         UserResponse userDto = modelMapper.map(place.getCreator(), UserResponse.class);
-//        List<CommentResponse> commentsDto = place.getComments()
-//                .stream()
-//                .map(c -> modelMapper.map(c, CommentResponse.class))
-//                .toList();
         Set<String> tagsDto = place.getTags().stream()
                 .map(tag -> tag.getId().getTag())
                 .collect(Collectors.toSet());
         PlaceResponse placeDto  = modelMapper.map(place, PlaceResponse.class);
         placeDto.setCreator(userDto);
         placeDto.setTags(tagsDto);
-        //placeDto.setComments(commentsDto);
         return placeDto;
     }
     public Place toEntity(PlaceRequest placeDto) {

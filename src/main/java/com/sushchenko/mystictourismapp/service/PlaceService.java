@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
 import com.sushchenko.mystictourismapp.repo.specification.PlaceSpecification;
+import com.sushchenko.mystictourismapp.service.helper.Helper;
 import com.sushchenko.mystictourismapp.utils.exception.NotEnoughPermissionsException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceNotFoundException;
 import com.sushchenko.mystictourismapp.utils.exception.PlaceRatingNotFoundException;
@@ -40,11 +41,11 @@ public class PlaceService {
     }
     @Transactional
     public List<Place> getAllByFilter(Double ratingStart, Double ratingEnd, String name,
-                                      Set<String> tags, Integer offset, Integer limit) {
+                                      Set<String> tags, Integer offset, Integer limit, Long userId) {
         int offsetValue = offset != null ? offset : 0;
         int limitValue = limit != null ? limit : Integer.MAX_VALUE;
         Pageable pageable = PageRequest.of(offsetValue, limitValue, Sort.by("id"));
-        return placeRepo.findAll(PlaceSpecification.filterPlaces(ratingStart, ratingEnd, name, tags), pageable)
+        return placeRepo.findAll(PlaceSpecification.filterPlaces(ratingStart, ratingEnd, name, tags, userId), pageable)
                 .getContent();
     }
     @Transactional
@@ -55,7 +56,7 @@ public class PlaceService {
     @Transactional
     public void deletePlace(Long id, User creator) {
         Place place = getById(id);
-        if(checkIfPlaceCreator(place.getCreator(), creator)) {
+        if(Helper.checkUserPermissions(place.getCreator(), creator)) {
             placeRepo.deleteById(id);
         } else {
             throw new NotEnoughPermissionsException("User with id:" + creator.getId() +
@@ -67,7 +68,7 @@ public class PlaceService {
         Place place = getById(id);
         Double rating = place.getRating();
         placeMapper.mergeDtoIntoEntity(placeDto, place);
-        if(checkIfPlaceCreator(place.getCreator(), creator)) {
+        if(Helper.checkUserPermissions(place.getCreator(), creator)) {
             place.setRating(rating);
             placeRepo.save(place);
         } else {
@@ -130,9 +131,6 @@ public class PlaceService {
                 .orElse(0.0);
         place.setRating(rating);
         return placeRepo.save(place);
-    }
-    private boolean checkIfPlaceCreator(User creator, User userPrincipal) {
-        return Objects.equals(creator.getId(), userPrincipal.getId());
     }
     private void enrichPlace(Place place) {
         place.setStatus(Status.UNCONFIRMED);

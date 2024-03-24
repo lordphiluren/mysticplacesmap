@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 @RestController
-@RequestMapping("/api/places")
+@RequestMapping("/api/v1/places")
 @RequiredArgsConstructor
 public class PlacesController {
     private final PlaceService placeService;
@@ -37,8 +37,9 @@ public class PlacesController {
                                          @RequestParam(name = "name", required = false) String name,
                                          @RequestParam(name = "tags", required = false) Set<String> tags,
                                          @RequestParam(name = "offset", required = false) Integer offset,
-                                         @RequestParam(name = "limit", required = false) Integer limit) {
-        return placeService.getAllByFilter(ratingStart, ratingEnd, name, tags, offset, limit).stream()
+                                         @RequestParam(name = "limit", required = false) Integer limit,
+                                         @RequestParam(name = "user", required = false) Long userId) {
+        return placeService.getAllByFilter(ratingStart, ratingEnd, name, tags, offset, limit, userId).stream()
                 .map(placeMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -57,7 +58,6 @@ public class PlacesController {
         placeService.deletePlace(id, userPrincipal.getUser());
         return ResponseEntity.ok("Place successfully deleted");
     }
-    // refactor TODO
     @PatchMapping("/{id}")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlace(@PathVariable Long id,
