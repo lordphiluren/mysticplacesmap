@@ -21,5 +21,5 @@ public class CommentResponse {
     private String message;
     private UserResponse creator;
     private Date createdAt;
-    private List<Attachment> attachments;
+    //private List<Attachment> attachments;
 }
