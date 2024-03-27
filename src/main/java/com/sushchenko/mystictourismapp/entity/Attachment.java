@@ -3,8 +3,7 @@ package com.sushchenko.mystictourismapp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,7 +26,7 @@ public class Attachment {
             joinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") }
     )
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -35,5 +34,9 @@ public class Attachment {
             joinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") }
     )
-    private List<Place> place;
+    private Set<Place> place;
+
+    public Attachment(String url) {
+        this.url = url;
+    }
 }

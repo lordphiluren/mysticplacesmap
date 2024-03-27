@@ -25,9 +25,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @RestController
 @RequestMapping("/api/v1/places")
 @RequiredArgsConstructor
@@ -126,5 +130,9 @@ public class PlacesController {
                 placeService.deletePlaceRating(id, userPrincipal.getUser()).getPlace()
         );
         return ResponseEntity.ok("Rating successfully deleted");
+    }
+    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id, @RequestPart List<MultipartFile> attachments) {
+        return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
     }
 }
