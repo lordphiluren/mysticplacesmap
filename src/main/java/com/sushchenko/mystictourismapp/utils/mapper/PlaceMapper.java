@@ -26,7 +26,11 @@ public class PlaceMapper {
         Set<String> tagsDto = place.getTags().stream()
                 .map(tag -> tag.getId().getTag())
                 .collect(Collectors.toSet());
+        Set<String> attachmentsDto = place.getAttachments().stream()
+                .map(attach -> attach.getId().getUrl())
+                .collect(Collectors.toSet());
         PlaceResponse placeDto  = modelMapper.map(place, PlaceResponse.class);
+        placeDto.setAttachments(attachmentsDto);
         placeDto.setCreator(userDto);
         placeDto.setTags(tagsDto);
         return placeDto;

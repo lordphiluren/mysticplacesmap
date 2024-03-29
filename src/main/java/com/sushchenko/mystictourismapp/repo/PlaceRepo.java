@@ -24,36 +24,6 @@ public interface PlaceRepo extends JpaRepository<Place, Long>, JpaSpecificationE
     Page<Place> findAll(Pageable pageable);
     @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "place-entity-graph-user_tags_attachs_comments")
     Optional<Place> findById(Long id);
-    @Query("SELECT p " +
-            "FROM Place p " +
-            "LEFT JOIN p.tags pt " +
-            "LEFT JOIN p.creator u " +
-            "LEFT JOIN p.attachments a " +
-            "WHERE pt.id.tag IN :tags")
-    Page<Place> findByTagsIn(@Param("tags") Set<String> tags, Pageable pageable);
-
-    @Query("SELECT p " +
-            "FROM Place p " +
-            "LEFT JOIN p.tags t " +
-            "LEFT JOIN p.creator u " +
-            "LEFT JOIN p.attachments a " +
-            "WHERE p.rating BETWEEN :ratingStart AND :ratingEnd AND " +
-            "upper(p.name) LIKE upper(concat('%', :name, '%')) AND " +
-            "t.id.tag in :tags")
-    Page<Place> findAllByFilter(@Nullable Double ratingStart,
-                                @Nullable Double ratingEnd,
-                                @Nullable String name,
-                                @Nullable Set<String> tags,
-                                Pageable pageable);
     @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "place-entity-graph-user_tags_attachs_comments")
     Page<Place> findAll(Specification<Place> spec, Pageable pageable);
-    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "place-entity-graph-user_tags_attachs_comments")
-    Page<Place> findAllByRating(Double rating, Pageable pageable);
-    @Query("SELECT p " +
-            "FROM Place p " +
-            "LEFT JOIN p.tags pt " +
-            "LEFT JOIN p.creator u " +
-            "LEFT JOIN p.attachments a " +
-            "WHERE pt.id.tag IN :tags AND p.rating = :rating")
-    Page<Place> findByTagsAndRating(@Param("tags") Set<String> tags, @Param("rating") Double rating, Pageable pageable);
 }

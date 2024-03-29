@@ -37,4 +37,8 @@
             <column name="url" type="varchar"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="v1-3" author="Artyom Sushchenko">
+        <addPrimaryKey tableName="place_attachment" columnNames="place_id, url" constraintName="pk_place_attachment" />
+    </changeSet>
 </databaseChangeLog>

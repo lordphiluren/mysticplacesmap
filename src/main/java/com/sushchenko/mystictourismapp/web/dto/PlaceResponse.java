@@ -31,5 +31,5 @@ public class PlaceResponse {
     private Status status;
     private Date createdAt;
     private Set<String> tags;
-    //private List<Attachment> attachments;
+    private Set<String> attachments;
 }

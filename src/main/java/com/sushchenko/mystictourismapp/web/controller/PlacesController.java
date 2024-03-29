@@ -51,10 +51,11 @@ public class PlacesController {
             summary = "Add place"
     )
     @SecurityRequirement(name = "JWT")
-    @PostMapping()
-    public ResponseEntity<?> addPlace(@Valid @RequestBody PlaceRequest placeDto,
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addPlace(@Valid @RequestPart("place") PlaceRequest placeDto,
+                                      @RequestPart("attachments") MultipartFile[] attachments,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return ResponseEntity.ok(placeMapper.toDto(placeService.add(placeDto, userPrincipal.getUser())));
+        return ResponseEntity.ok(placeMapper.toDto(placeService.add(placeDto, attachments, userPrincipal.getUser())));
     }
     @Operation(
             summary = "Get place by id"

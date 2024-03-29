@@ -2,8 +2,10 @@ package com.sushchenko.mystictourismapp.service;
 
 import com.sushchenko.mystictourismapp.entity.*;
 import com.sushchenko.mystictourismapp.entity.enums.Status;
+import com.sushchenko.mystictourismapp.entity.id.PlaceAttachmentKey;
 import com.sushchenko.mystictourismapp.entity.id.PlaceRatingKey;
 import com.sushchenko.mystictourismapp.entity.id.PlaceTagKey;
+import com.sushchenko.mystictourismapp.repo.PlaceAttachmentRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -31,12 +34,16 @@ public class PlaceService {
     private final PlaceTagRepo placeTagRepo;
     private final PlaceMapper placeMapper;
     private final UploadService uploadService;
+    private final PlaceAttachmentRepo placeAttachRepo;
     @Transactional
-    public Place add(PlaceRequest placeDto, User user) {
+    public Place add(PlaceRequest placeDto, MultipartFile[] attachments, User user) {
         Place place = placeMapper.toEntity(placeDto);
         enrichPlace(place);
         place.setCreator(user);
         Place savedPlace = placeRepo.save(place);
+        if(attachments != null) {
+            addAttachmentsToPlace(place, attachments);
+        }
         addPlaceRating(savedPlace, savedPlace.getCreator(), savedPlace.getRating());
         addTagsToPlace(savedPlace, placeDto.getTags());
         return savedPlace;
@@ -126,6 +133,17 @@ public class PlaceService {
         placeTagRepo.saveAll(savedTags);
     }
 
+    @Transactional
+    public void addAttachmentsToPlace(Place place, MultipartFile[] attachments) {
+        Set<String> urls = uploadService.uploadAttachments(Arrays.asList(attachments));
+        Set<PlaceAttachment> savedAttachments = new HashSet<>();
+        for(String url : urls) {
+            PlaceAttachmentKey placeAttachmentKey = new PlaceAttachmentKey(place.getId(), url);
+            PlaceAttachment placeAttachment = new PlaceAttachment(placeAttachmentKey, place);
+            savedAttachments.add(placeAttachment);
+        }
+        place.setAttachments(new HashSet<>(placeAttachRepo.saveAll(savedAttachments)));
+    }
     @Transactional
     public Place recalculatePlaceRating(Place place) {
         Double rating = place.getPlaceRates().stream()

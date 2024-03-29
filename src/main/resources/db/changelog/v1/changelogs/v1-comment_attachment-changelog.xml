@@ -32,10 +32,13 @@
     </changeSet>
 
     <changeSet id="v1-2" author="Artyom Sushchenko">
-
         <dropColumn tableName="comment_attachment" columnName="attachment_id" />
         <addColumn tableName="comment_attachment">
             <column name="url" type="varchar" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="v1-3" author="Artyom Sushchenko">
+        <addPrimaryKey tableName="comment_attachment" columnNames="comment_id, url" constraintName="pk_comment_attachment" />
     </changeSet>
 </databaseChangeLog>
