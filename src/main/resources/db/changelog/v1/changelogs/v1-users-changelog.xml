@@ -24,6 +24,7 @@
             <column name="password" type="varchar">
                 <constraints nullable="false" />
             </column>
+            <column name="profile_picture" type="varchar"/>
             <column name="name" type="varchar(32)" />
             <column name="last_name" type="varchar(32)" />
             <column name="email" type="varchar(64)">
@@ -31,12 +32,6 @@
             </column>
             <column name="role" type="varchar(32)" />
         </createTable>
-    </changeSet>
-
-    <changeSet id="v1-2" author="Artyom Sushchenko">
-        <addColumn tableName="users">
-            <column name="profile_picture" type="varchar"/>
-        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

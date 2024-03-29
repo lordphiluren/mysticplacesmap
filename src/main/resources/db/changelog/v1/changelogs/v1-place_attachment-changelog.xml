@@ -16,29 +16,14 @@
 
         <createTable tableName="place_attachment">
             <column name="place_id" type="bigint" />
-            <column name="attachment_id" type="bigint" />
+            <column name="url" type="varchar"/>
         </createTable>
-        <addPrimaryKey tableName="place_attachment" columnNames="place_id, attachment_id" constraintName="pk_place_attachment"/>
+        <addPrimaryKey tableName="place_attachment" columnNames="place_id, url" constraintName="pk_place_attachment" />
         <addForeignKeyConstraint baseTableName="place_attachment" baseColumnNames="place_id" constraintName="fk_place_attachment"
                                  referencedTableName="place"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="place_attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_place"
-                                 referencedTableName="attachment"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"
-                                 onUpdate="CASCADE"/>
     </changeSet>
 
-    <changeSet id="v1-2" author="Artyom Sushchenko">
-        <dropColumn tableName="place_attachment" columnName="attachment_id" />
-        <addColumn tableName="place_attachment">
-            <column name="url" type="varchar"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="v1-3" author="Artyom Sushchenko">
-        <addPrimaryKey tableName="place_attachment" columnNames="place_id, url" constraintName="pk_place_attachment" />
-    </changeSet>
 </databaseChangeLog>

@@ -16,29 +16,14 @@
 
         <createTable tableName='comment_attachment'>
             <column name="comment_id" type="bigint" />
-            <column name="attachment_id" type="bigint" />
+            <column name="url" type="varchar" />
         </createTable>
-        <addPrimaryKey tableName="comment_attachment" columnNames="comment_id, attachment_id" constraintName="pk_comment_attachment"/>
         <addForeignKeyConstraint baseTableName="comment_attachment" baseColumnNames="comment_id" constraintName="fk_comment_attachment"
                                  referencedTableName="comment"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
-        <addForeignKeyConstraint baseTableName="comment_attachment" baseColumnNames="attachment_id" constraintName="fk_attachment_comment"
-                                 referencedTableName="attachment"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"
-                                 onUpdate="CASCADE"/>
-    </changeSet>
-
-    <changeSet id="v1-2" author="Artyom Sushchenko">
-        <dropColumn tableName="comment_attachment" columnName="attachment_id" />
-        <addColumn tableName="comment_attachment">
-            <column name="url" type="varchar" />
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="v1-3" author="Artyom Sushchenko">
         <addPrimaryKey tableName="comment_attachment" columnNames="comment_id, url" constraintName="pk_comment_attachment" />
     </changeSet>
+
 </databaseChangeLog>

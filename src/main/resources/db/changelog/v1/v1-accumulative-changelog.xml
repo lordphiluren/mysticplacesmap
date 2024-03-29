@@ -5,7 +5,6 @@
 
     <include file="changelogs/v1-users-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-place-chagelog.xml" relativeToChangelogFile="true"/>
-    <include file="changelogs/v1-attachment-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-placeratings-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-comment-changelog.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/v1-place_attachment-changelog.xml" relativeToChangelogFile="true"/>
