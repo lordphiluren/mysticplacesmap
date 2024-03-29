@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.service.CommentService;
 import com.sushchenko.mystictourismapp.utils.mapper.CommentMapper;
 import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.CommentResponse;
+import com.sushchenko.mystictourismapp.web.dto.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,6 +70,6 @@ public class CommentsController {
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
                                            @AuthenticationPrincipal UserPrincipal userPrincipal) {
         commentService.deleteComment(commentId, userPrincipal.getUser());
-        return ResponseEntity.ok("Comment successfully deleted");
+        return ResponseEntity.ok(new ResponseMessage("Comment successfully deleted"));
     }
 }

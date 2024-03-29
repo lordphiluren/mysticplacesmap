@@ -13,6 +13,7 @@ import com.sushchenko.mystictourismapp.utils.validation.UpdateValidation;
 import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceResponse;
+import com.sushchenko.mystictourismapp.web.dto.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,7 +80,7 @@ public class PlacesController {
     public ResponseEntity<?> deletePlace(@PathVariable Long id,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
         placeService.deletePlace(id, userPrincipal.getUser());
-        return ResponseEntity.ok("Place successfully deleted");
+        return ResponseEntity.ok(new ResponseMessage("Place successfully deleted"));
     }
     @Operation(
             summary = "Update place"
@@ -90,8 +91,7 @@ public class PlacesController {
     public ResponseEntity<?> updatePlace(@PathVariable Long id,
                                          @Validated(UpdateValidation.class) @RequestBody PlaceRequest placeDto,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        placeService.updatePlace(id, placeDto, userPrincipal.getUser());
-        return ResponseEntity.ok("Place successfully updated");
+        return ResponseEntity.ok(placeMapper.toDto(placeService.updatePlace(id, placeDto, userPrincipal.getUser())));
     }
     @Operation(
             summary = "Add rates to place"
@@ -129,7 +129,7 @@ public class PlacesController {
         placeService.recalculatePlaceRating(
                 placeService.deletePlaceRating(id, userPrincipal.getUser()).getPlace()
         );
-        return ResponseEntity.ok("Rating successfully deleted");
+        return ResponseEntity.ok(new ResponseMessage("Rating successfully deleted"));
     }
     @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id, @RequestPart List<MultipartFile> attachments) {

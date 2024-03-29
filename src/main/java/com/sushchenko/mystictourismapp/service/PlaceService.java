@@ -68,17 +68,18 @@ public class PlaceService {
         }
     }
     @Transactional
-    public void updatePlace(Long id, PlaceRequest placeDto, User creator) {
+    public Place updatePlace(Long id, PlaceRequest placeDto, User creator) {
         Place place = getById(id);
         Double rating = place.getRating();
         placeMapper.mergeDtoIntoEntity(placeDto, place);
         if(Helper.checkUserPermissions(place.getCreator(), creator)) {
             place.setRating(rating);
-            placeRepo.save(place);
+            place = placeRepo.save(place);
         } else {
             throw new NotEnoughPermissionsException("User with id:" + creator.getId() +
                     " is not allowed to modify this place");
         }
+        return place;
     }
     @Transactional
     public Place addRates(Long id, User user, Double rating) {

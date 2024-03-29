@@ -6,6 +6,7 @@ import com.sushchenko.mystictourismapp.service.AuthService;
 import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
 import com.sushchenko.mystictourismapp.web.dto.AuthRequest;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
+import com.sushchenko.mystictourismapp.web.dto.ResponseMessage;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +46,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody AuthRequest authRequest) {
         authService.signUp(modelMapper.map(authRequest, User.class));
-        return ResponseEntity.ok("Successful registration");
+        return ResponseEntity.ok(new ResponseMessage("Successful registration"));
     }
 }
