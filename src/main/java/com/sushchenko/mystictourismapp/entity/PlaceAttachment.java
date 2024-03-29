@@ -1,6 +1,6 @@
 package com.sushchenko.mystictourismapp.entity;
 
-import com.sushchenko.mystictourismapp.entity.id.PlaceTagKey;
+import com.sushchenko.mystictourismapp.entity.id.PlaceAttachmentKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "place_tag")
-public class PlaceTag {
+@Table(name = "place_attachment")
+public class PlaceAttachment {
     @EmbeddedId
-    private PlaceTagKey id;
+    private PlaceAttachmentKey id;
 
     // Relations
     @ManyToOne(fetch = FetchType.LAZY)

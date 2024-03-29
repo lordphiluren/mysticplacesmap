@@ -1,7 +1,7 @@
 package com.sushchenko.mystictourismapp.repo;
 
 import com.sushchenko.mystictourismapp.entity.PlaceRating;
-import com.sushchenko.mystictourismapp.entity.PlaceRatingKey;
+import com.sushchenko.mystictourismapp.entity.id.PlaceRatingKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

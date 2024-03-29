@@ -1,5 +1,6 @@
 package com.sushchenko.mystictourismapp.entity;
 
+import com.sushchenko.mystictourismapp.entity.id.PlaceRatingKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

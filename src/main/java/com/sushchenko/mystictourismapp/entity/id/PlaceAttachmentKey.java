@@ -1,4 +1,4 @@
-package com.sushchenko.mystictourismapp.entity;
+package com.sushchenko.mystictourismapp.entity.id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -15,24 +15,23 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class PlaceTagKey implements Serializable {
+public class PlaceAttachmentKey implements Serializable {
     @Column(name = "place_id")
     private Long placeId;
-    @Column(name = "tag")
-    private String tag;
+    @Column(name = "url")
+    private String url;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlaceTagKey that = (PlaceTagKey) o;
-        return Objects.equals(tag, that.tag) &&
+        PlaceAttachmentKey that = (PlaceAttachmentKey) o;
+        return Objects.equals(url, that.url) &&
                 Objects.equals(placeId, that.placeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tag, placeId);
+        return Objects.hash(url, placeId);
     }
-
 }

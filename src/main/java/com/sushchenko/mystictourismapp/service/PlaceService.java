@@ -2,7 +2,8 @@ package com.sushchenko.mystictourismapp.service;
 
 import com.sushchenko.mystictourismapp.entity.*;
 import com.sushchenko.mystictourismapp.entity.enums.Status;
-import com.sushchenko.mystictourismapp.repo.AttachmentRepo;
+import com.sushchenko.mystictourismapp.entity.id.PlaceRatingKey;
+import com.sushchenko.mystictourismapp.entity.id.PlaceTagKey;
 import com.sushchenko.mystictourismapp.repo.PlaceRatingRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceRepo;
 import com.sushchenko.mystictourismapp.repo.PlaceTagRepo;
@@ -19,8 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -32,7 +31,6 @@ public class PlaceService {
     private final PlaceTagRepo placeTagRepo;
     private final PlaceMapper placeMapper;
     private final UploadService uploadService;
-    private final AttachmentRepo attachmentRepo;
     @Transactional
     public Place add(PlaceRequest placeDto, User user) {
         Place place = placeMapper.toEntity(placeDto);
@@ -139,15 +137,15 @@ public class PlaceService {
     }
     // TODO
     // REFACTOR ASAP !!!!!!
-    @Transactional
-    public Place addPlaceAttachments(Long id, List<MultipartFile> attachments) {
-        Place place = getById(id);
-        Set<Attachment> savedAttachments = uploadService.uploadAttachments(attachments);
-        List<Attachment> at = attachmentRepo.saveAll(savedAttachments);
-        Set<Attachment> set = new HashSet<>(at);
-        place.setAttachments(set);
-        return place;
-    }
+//    @Transactional
+//    public Place addPlaceAttachments(Long id, List<MultipartFile> attachments) {
+//        Place place = getById(id);
+//        Set<Attachment> savedAttachments = uploadService.uploadAttachments(attachments);
+//        List<Attachment> at = attachmentRepo.saveAll(savedAttachments);
+//        Set<Attachment> set = new HashSet<>(at);
+//        place.setAttachments(set);
+//        return place;
+//    }
     private void enrichPlace(Place place) {
         place.setStatus(Status.UNCONFIRMED);
         place.setComments(new HashSet<>());

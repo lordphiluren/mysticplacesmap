@@ -30,4 +30,12 @@
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
     </changeSet>
+
+    <changeSet id="v1-2" author="Artyom Sushchenko">
+
+        <dropColumn tableName="comment_attachment" columnName="attachment_id" />
+        <addColumn tableName="comment_attachment">
+            <column name="url" type="varchar" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -74,11 +74,6 @@ public class Place {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
     private Set<Comment> comments;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "place_attachment",
-            joinColumns = { @JoinColumn(name = "place_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") }
-    )
-    private Set<Attachment> attachments;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<PlaceAttachment> attachments;
 }

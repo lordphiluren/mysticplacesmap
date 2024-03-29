@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 @NamedEntityGraph(
         name = "comment-entity-graph-user_attachs",
         attributeNodes = {
@@ -40,11 +42,6 @@ public class Comment {
     @JoinColumn(name = "place_id", referencedColumnName = "id")
     private Place place;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "comment_attachment",
-            joinColumns = { @JoinColumn(name = "comment_id", referencedColumnName = "id") },
-            inverseJoinColumns = { @JoinColumn(name = "attachment_id", referencedColumnName = "id") }
-    )
-    private List<Attachment> attachments;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment")
+    private Set<CommentAttachment> attachments;
 }

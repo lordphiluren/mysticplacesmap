@@ -1,4 +1,4 @@
-package com.sushchenko.mystictourismapp.entity;
+package com.sushchenko.mystictourismapp.entity.id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

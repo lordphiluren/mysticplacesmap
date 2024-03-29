@@ -1,16 +1,10 @@
 package com.sushchenko.mystictourismapp.web.controller;
 
-import com.sushchenko.mystictourismapp.entity.Comment;
 import com.sushchenko.mystictourismapp.entity.Place;
-import com.sushchenko.mystictourismapp.entity.PlaceRating;
-import com.sushchenko.mystictourismapp.entity.PlaceRatingKey;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.PlaceService;
-import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
-import com.sushchenko.mystictourismapp.utils.mapper.CommentMapper;
 import com.sushchenko.mystictourismapp.utils.mapper.PlaceMapper;
 import com.sushchenko.mystictourismapp.utils.validation.UpdateValidation;
-import com.sushchenko.mystictourismapp.web.dto.CommentRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceRequest;
 import com.sushchenko.mystictourismapp.web.dto.PlaceResponse;
 import com.sushchenko.mystictourismapp.web.dto.ResponseMessage;
@@ -19,12 +13,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,8 +122,8 @@ public class PlacesController {
         );
         return ResponseEntity.ok(new ResponseMessage("Rating successfully deleted"));
     }
-    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id, @RequestPart List<MultipartFile> attachments) {
-        return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
-    }
+//    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+//    public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id, @RequestPart List<MultipartFile> attachments) {
+//        return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
+//    }
 }

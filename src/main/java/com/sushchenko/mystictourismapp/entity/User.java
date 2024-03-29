@@ -31,6 +31,8 @@ public class User {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
     // Relations
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
