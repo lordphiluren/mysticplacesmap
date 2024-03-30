@@ -24,4 +24,13 @@ public class UploadService {
         }
         return objectStorageService.uploadAttachments(attachmentsBytes);
     }
+    public String uploadAttachment(MultipartFile attachment) {
+        byte[] attachmentsBytes;
+        try {
+            attachmentsBytes = attachment.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return objectStorageService.uploadAttachment(attachmentsBytes);
+    }
 }

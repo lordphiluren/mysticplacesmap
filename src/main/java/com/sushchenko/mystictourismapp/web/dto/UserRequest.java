@@ -17,13 +17,13 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserRequest {
-    @NotNull(message = "Username can not be empty", groups = {UpdateValidation.class})
-    @Size(min = 4, max = 32, message = "Username size should be between 4 and 32")
+    @NotNull(message = "Username can not be empty")
+    @Size(min = 4, max = 32, message = "Username size should be between 4 and 32", groups = {UpdateValidation.class})
     private String username;
-    @Size(min = 2, max = 32, message = "Name size should be between 2 and 32")
+    @Size(min = 2, max = 32, message = "Name size should be between 2 and 32", groups = {UpdateValidation.class})
     private String name;
-    @Size(min = 2, max = 32, message = "Lastname size should be between 2 and 32")
+    @Size(min = 2, max = 32, message = "Lastname size should be between 2 and 32", groups = {UpdateValidation.class})
     private String lastName;
-    @Email(message = "Email should be valid")
+    @Email(message = "Email should be valid", groups = {UpdateValidation.class})
     private String email;
 }

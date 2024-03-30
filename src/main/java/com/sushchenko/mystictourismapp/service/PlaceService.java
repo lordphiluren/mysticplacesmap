@@ -123,26 +123,31 @@ public class PlaceService {
     }
     @Transactional
     public void addTagsToPlace(Place place, Set<String> tags) {
-        Set<PlaceTag> savedTags = new HashSet<>();
+        Set<PlaceTag> tagsToSave = new HashSet<>();
         for(String tag : tags) {
             PlaceTagKey placeTagKey = new PlaceTagKey(place.getId(), tag);
             PlaceTag placeTag = new PlaceTag(placeTagKey, place);
-            savedTags.add(placeTag);
+            tagsToSave.add(placeTag);
         }
-        place.setTags(savedTags);
-        placeTagRepo.saveAll(savedTags);
+        List<PlaceTag> savedTags = placeTagRepo.saveAll(tagsToSave);
+        Set<PlaceTag> placeTags = place.getTags();
+        placeTags.addAll(savedTags);
+        place.setTags(placeTags);
     }
 
     @Transactional
     public void addAttachmentsToPlace(Place place, MultipartFile[] attachments) {
         Set<String> urls = uploadService.uploadAttachments(Arrays.asList(attachments));
-        Set<PlaceAttachment> savedAttachments = new HashSet<>();
+        Set<PlaceAttachment> attachmentsToSave = new HashSet<>();
         for(String url : urls) {
             PlaceAttachmentKey placeAttachmentKey = new PlaceAttachmentKey(place.getId(), url);
             PlaceAttachment placeAttachment = new PlaceAttachment(placeAttachmentKey, place);
-            savedAttachments.add(placeAttachment);
+            attachmentsToSave.add(placeAttachment);
         }
-        place.setAttachments(new HashSet<>(placeAttachRepo.saveAll(savedAttachments)));
+        List<PlaceAttachment> savedAttachments = placeAttachRepo.saveAll(attachmentsToSave);
+        Set<PlaceAttachment> placeAttachments = place.getAttachments();
+        placeAttachments.addAll(savedAttachments);
+        place.setAttachments(placeAttachments);
     }
     @Transactional
     public Place recalculatePlaceRating(Place place) {
@@ -153,22 +158,18 @@ public class PlaceService {
         place.setRating(rating);
         return placeRepo.save(place);
     }
-    // TODO
-    // REFACTOR ASAP !!!!!!
-//    @Transactional
-//    public Place addPlaceAttachments(Long id, List<MultipartFile> attachments) {
-//        Place place = getById(id);
-//        Set<Attachment> savedAttachments = uploadService.uploadAttachments(attachments);
-//        List<Attachment> at = attachmentRepo.saveAll(savedAttachments);
-//        Set<Attachment> set = new HashSet<>(at);
-//        place.setAttachments(set);
-//        return place;
-//    }
+    @Transactional
+    public Place addPlaceAttachments(Long id, MultipartFile[] attachments) {
+        Place place = getById(id);
+        addAttachmentsToPlace(place, attachments);
+        return place;
+    }
     private void enrichPlace(Place place) {
         place.setStatus(Status.UNCONFIRMED);
         place.setComments(new HashSet<>());
         place.setCreatedAt(new Date());
         place.setPlaceRates(new HashSet<>());
         place.setTags(new HashSet<>());
+        place.setAttachments(new HashSet<>());
     }
 }

@@ -11,6 +11,7 @@ import com.sushchenko.mystictourismapp.web.dto.UserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class UserService {
     private final UserRepo userRepo;
     private final UserMapper userMapper;
+    private final UploadService uploadService;
 
     @Transactional
     public User getById(Long id) {
@@ -27,11 +29,12 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with id:" + id + " was not found"));
     }
     @Transactional
-    public User update(Long id, UserRequest userDto, User creator) {
+    public User update(Long id, UserRequest userDto, MultipartFile attachment, User creator) {
         User user = getById(id);
         userMapper.mergeDtoIntoEntity(userDto, user);
         if(Helper.checkUserPermissions(user, creator)) {
             user = userRepo.save(user);
+            user.setProfilePicture(uploadService.uploadAttachment(attachment));
         } else {
             throw new NotEnoughPermissionsException("User with id: " + creator.getId() +
                     " can't modify user with id: " + id);

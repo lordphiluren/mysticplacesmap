@@ -35,12 +35,12 @@ public class PlaceRequest {
     @Size(max = 256, message = "Address length should be lower than 256 characters", groups = {UpdateValidation.class})
     private String address;
     @NotNull(message = "Rating can not be empty")
-    @Max(value = 5, message = "Rating can't be more than 5")
-    @Min(value = 0, message = "Rating can't be less than 0")
+    @Max(value = 5, message = "Rating can't be more than 5", groups = {UpdateValidation.class})
+    @Min(value = 0, message = "Rating can't be less than 0", groups = {UpdateValidation.class})
     private Double rating;
-    @NotNull(message = "Latitude cannot be empty")
+    @NotNull(message = "Latitude cannot be empty", groups = {UpdateValidation.class})
     private Double latitude;
-    @NotNull(message = "Longitude cannot be empty")
+    @NotNull(message = "Longitude cannot be empty", groups = {UpdateValidation.class})
     private Double longitude;
     private Set<String> tags;
 }

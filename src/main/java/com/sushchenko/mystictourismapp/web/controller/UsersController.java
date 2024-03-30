@@ -10,10 +10,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 
 @RestController
@@ -34,12 +39,13 @@ public class UsersController {
             summary = "Update user info by id"
     )
     @SecurityRequirement(name = "JWT")
-    @PutMapping(path = "/{id}")
+    @RequestMapping(path = "/{id}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateUserInfo(@PathVariable Long id,
-                                            @Validated(UpdateValidation.class) @RequestBody UserRequest userDto,
+                                            @Validated(UpdateValidation.class) @RequestPart("user") UserRequest userDto,
+                                            @RequestPart("attachments") MultipartFile attachment,
                                             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(
-            userMapper.toDto(userService.update(id, userDto, userPrincipal.getUser()))
+            userMapper.toDto(userService.update(id, userDto, attachment, userPrincipal.getUser()))
         );
     }
 }

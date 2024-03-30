@@ -123,8 +123,9 @@ public class PlacesController {
         );
         return ResponseEntity.ok(new ResponseMessage("Rating successfully deleted"));
     }
-//    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-//    public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id, @RequestPart List<MultipartFile> attachments) {
-//        return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
-//    }
+    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id,
+                                                 @RequestPart("attachments") MultipartFile[] attachments) {
+        return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
+    }
 }
