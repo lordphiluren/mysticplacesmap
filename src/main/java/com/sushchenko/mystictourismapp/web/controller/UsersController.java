@@ -41,8 +41,8 @@ public class UsersController {
     @SecurityRequirement(name = "JWT")
     @RequestMapping(path = "/{id}", method = PUT, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateUserInfo(@PathVariable Long id,
-                                            @Validated(UpdateValidation.class) @RequestPart("user") UserRequest userDto,
-                                            @RequestPart("attachments") MultipartFile attachment,
+                                            @Validated(UpdateValidation.class) @RequestPart(value = "user", required = false) UserRequest userDto,
+                                            @RequestPart(value = "attachments", required = false) MultipartFile attachment,
                                             @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(
             userMapper.toDto(userService.update(id, userDto, attachment, userPrincipal.getUser()))

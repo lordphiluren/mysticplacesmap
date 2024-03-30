@@ -9,6 +9,9 @@ import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class CommentMapper {
@@ -16,7 +19,11 @@ public class CommentMapper {
 
     public CommentResponse toDto(Comment comment) {
         UserResponse userDto = modelMapper.map(comment.getCreator(), UserResponse.class);
+        Set<String> attachmentsDto = comment.getAttachments().stream()
+                .map(attach -> attach.getId().getUrl())
+                .collect(Collectors.toSet());
         CommentResponse commentDto = modelMapper.map(comment, CommentResponse.class);
+        commentDto.setAttachments(attachmentsDto);
         commentDto.setCreator(userDto);
         return commentDto;
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,5 +20,5 @@ public class CommentResponse {
     private String message;
     private UserResponse creator;
     private Date createdAt;
-    //private List<Attachment> attachments;
+    private Set<String> attachments;
 }

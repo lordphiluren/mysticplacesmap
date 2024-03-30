@@ -42,7 +42,7 @@ public class PlaceService {
         place.setCreator(user);
         Place savedPlace = placeRepo.save(place);
         if(attachments != null) {
-            addAttachmentsToPlace(place, attachments);
+            addAttachmentsToPlace(savedPlace, attachments);
         }
         addPlaceRating(savedPlace, savedPlace.getCreator(), savedPlace.getRating());
         addTagsToPlace(savedPlace, placeDto.getTags());

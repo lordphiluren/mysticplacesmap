@@ -34,7 +34,9 @@ public class UserService {
         userMapper.mergeDtoIntoEntity(userDto, user);
         if(Helper.checkUserPermissions(user, creator)) {
             user = userRepo.save(user);
-            user.setProfilePicture(uploadService.uploadAttachment(attachment));
+            if(attachment != null) {
+                user.setProfilePicture(uploadService.uploadAttachment(attachment));
+            }
         } else {
             throw new NotEnoughPermissionsException("User with id: " + creator.getId() +
                     " can't modify user with id: " + id);

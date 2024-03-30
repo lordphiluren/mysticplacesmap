@@ -1,8 +1,11 @@
 package com.sushchenko.mystictourismapp.service;
 
 import com.sushchenko.mystictourismapp.entity.Comment;
+import com.sushchenko.mystictourismapp.entity.CommentAttachment;
 import com.sushchenko.mystictourismapp.entity.Place;
 import com.sushchenko.mystictourismapp.entity.User;
+import com.sushchenko.mystictourismapp.entity.id.CommentAttachmentKey;
+import com.sushchenko.mystictourismapp.repo.CommentAttachmentRepo;
 import com.sushchenko.mystictourismapp.repo.CommentRepo;
 import com.sushchenko.mystictourismapp.service.helper.Helper;
 import com.sushchenko.mystictourismapp.utils.exception.CommentNotFoundException;
@@ -15,10 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +28,17 @@ public class CommentService {
     private final CommentRepo commentRepo;
     private final CommentMapper commentMapper;
     private final PlaceService placeService;
+    private final CommentAttachmentRepo commentAttachmentRepo;
+    private final UploadService uploadService;
     @Transactional
-    public Comment addComment(Long placeId, Comment comment, User creator) {
+    public Comment addComment(Long placeId, Comment comment, MultipartFile[] attachments, User creator) {
         Place place = placeService.getById(placeId);
-        comment.setPlace(place);
-        comment.setCreator(creator);
-        comment.setCreatedAt(new Date());
-        return commentRepo.save(comment);
+        enrichComment(comment, place, creator);
+        Comment savedComment = commentRepo.save(comment);
+        if(attachments != null) {
+            addAttachmentsToComment(savedComment, attachments);
+        }
+        return savedComment;
     }
     @Transactional
     public List<Comment> getCommentsByPlaceId(Long placeId, Integer offset, Integer limit) {
@@ -67,5 +73,25 @@ public class CommentService {
             throw new NotEnoughPermissionsException("User with id: " + creator.getId() +
                     " is not allowed to modify comment with id: " + id);
         }
+    }
+    @Transactional
+    public void addAttachmentsToComment(Comment comment, MultipartFile[] attachments) {
+        Set<String> urls = uploadService.uploadAttachments(Arrays.asList(attachments));
+        Set<CommentAttachment> attachmentsToSave = new HashSet<>();
+        for(String url : urls) {
+            CommentAttachmentKey commentAttachmentKey = CommentAttachmentKey(comment.getId(), url);
+            CommentAttachment commentAttachment = new CommentAttachment(commentAttachmentKey, comment);
+            attachmentsToSave.add(commentAttachment);
+        }
+        List<CommentAttachment> savedAttachments = commentAttachmentRepo.saveAll(attachmentsToSave);
+        Set<CommentAttachment> commentAttachments = comment.getAttachments();
+        commentAttachments.addAll(savedAttachments);
+        comment.setAttachments(commentAttachments);
+    }
+    private void enrichComment(Comment comment, Place place, User creator) {
+        comment.setPlace(place);
+        comment.setCreator(creator);
+        comment.setCreatedAt(new Date());
+        comment.setAttachments(new HashSet<>());
     }
 }

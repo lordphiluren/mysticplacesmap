@@ -52,8 +52,8 @@ public class PlacesController {
     )
     @SecurityRequirement(name = "JWT")
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addPlace(@Valid @RequestPart("place") PlaceRequest placeDto,
-                                      @RequestPart("attachments") MultipartFile[] attachments,
+    public ResponseEntity<?> addPlace(@Valid @RequestPart(value = "place", required = false) PlaceRequest placeDto,
+                                      @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(placeMapper.toDto(placeService.add(placeDto, attachments, userPrincipal.getUser())));
     }
