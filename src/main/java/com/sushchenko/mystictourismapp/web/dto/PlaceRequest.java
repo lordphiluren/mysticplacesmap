@@ -24,7 +24,6 @@ import java.util.Set;
 public class PlaceRequest {
     @NotNull(message = "Place name can not be empty")
     private String name;
-    private UserRequest creator;
     @NotNull(message = "Short description can not be empty")
     @Size(max = 100, message = "Short description length should be lower that 100 characters", groups = {UpdateValidation.class})
     private String shortDescription;

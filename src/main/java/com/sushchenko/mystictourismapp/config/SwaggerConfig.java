@@ -5,6 +5,11 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+
+import java.util.ArrayList;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -23,5 +28,14 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
+@Configuration
 public class SwaggerConfig {
+
+    public SwaggerConfig(MappingJackson2HttpMessageConverter converter) {
+        var supportedMediaTypes = new ArrayList<>(converter.getSupportedMediaTypes());
+        supportedMediaTypes.add(new MediaType("application", "octet-stream"));
+        converter.setSupportedMediaTypes(supportedMediaTypes);
+    }
+
+
 }
