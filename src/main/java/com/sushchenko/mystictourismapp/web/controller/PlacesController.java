@@ -123,6 +123,10 @@ public class PlacesController {
         );
         return ResponseEntity.ok(new ResponseMessage("Rating successfully deleted"));
     }
+    @Operation(
+            summary = "Add attachments to existing place"
+    )
+    @SecurityRequirement(name = "JWT")
     @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id,
                                                  @RequestPart("attachments") MultipartFile[] attachments) {

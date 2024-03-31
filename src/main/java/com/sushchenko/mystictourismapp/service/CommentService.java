@@ -79,7 +79,7 @@ public class CommentService {
         Set<String> urls = uploadService.uploadAttachments(Arrays.asList(attachments));
         Set<CommentAttachment> attachmentsToSave = new HashSet<>();
         for(String url : urls) {
-            CommentAttachmentKey commentAttachmentKey = CommentAttachmentKey(comment.getId(), url);
+            CommentAttachmentKey commentAttachmentKey = new CommentAttachmentKey(comment.getId(), url);
             CommentAttachment commentAttachment = new CommentAttachment(commentAttachmentKey, comment);
             attachmentsToSave.add(commentAttachment);
         }
