@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/diploma_db
+    username: postgres
+    password: qwerty
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 8
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+security:
+  jwt:
+    secret-key: veryLongAndVerySecretKeyNoBodyWillEverGuessItBecauseItIsUnbelievablySecretOhMyLordSomeOneTryToGuessIt
+yandex-cloud:
+  bucket-name: mystery-51
+  access-key: YCAJE1RYEKkmcdCVALyHuyydF
+  secret-key: YCMbk3Zf-dg0u-A-gkvzBkXxsJpeiq5n-Fid-j6Z

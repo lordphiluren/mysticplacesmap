@@ -4,6 +4,7 @@ import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.web.dto.UserRequest;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +19,8 @@ public class UserMapper {
     public UserResponse toDto(User user) {
         return modelMapper.map(user, UserResponse.class);
     }
-
+    public void mergeDtoIntoEntity(UserRequest userDto, User user) {
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+        modelMapper.map(userDto, user);
+    }
 }

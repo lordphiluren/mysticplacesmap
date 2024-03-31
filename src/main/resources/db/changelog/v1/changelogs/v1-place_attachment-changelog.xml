@@ -1,0 +1,29 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="v1-1" author="Sushchenko Artyom">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="place_attachment"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="place_attachment">
+            <column name="place_id" type="bigint" />
+            <column name="url" type="varchar"/>
+        </createTable>
+        <addPrimaryKey tableName="place_attachment" columnNames="place_id, url" constraintName="pk_place_attachment" />
+        <addForeignKeyConstraint baseTableName="place_attachment" baseColumnNames="place_id" constraintName="fk_place_attachment"
+                                 referencedTableName="place"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

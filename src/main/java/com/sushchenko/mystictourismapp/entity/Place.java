@@ -1,44 +1,79 @@
 package com.sushchenko.mystictourismapp.entity;
 
 import com.sushchenko.mystictourismapp.entity.enums.Status;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Set;
-
+@NamedEntityGraph(
+    name = "place-entity-graph-user_tags_attachs_comments",
+    attributeNodes = {
+        @NamedAttributeNode("name"),
+        @NamedAttributeNode("shortDescription"),
+        @NamedAttributeNode("fullDescription"),
+        @NamedAttributeNode("howToGet"),
+        @NamedAttributeNode("address"),
+        @NamedAttributeNode("rating"),
+        @NamedAttributeNode("latitude"),
+        @NamedAttributeNode("longitude"),
+        @NamedAttributeNode("status"),
+        @NamedAttributeNode("createdAt"),
+        @NamedAttributeNode("creator"),
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("attachments")
+    }
+)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "places")
+@Entity
+@Table(name = "place")
 public class Place {
     @Id
-    private String id;
-    @NotNull(message = "Place name can not be empty")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "name")
     private String name;
-    private User creator;
-    @NotNull(message = "Short description can not be empty")
-    @Size(max = 100, message = "Short description length should be lower that 100 characters")
+    @Column(name = "short_description")
     private String shortDescription;
-    @Size(max = 1024, message = "Full description length should be lower that 1024 characters")
+    @Column(name = "full_description")
     private String fullDescription;
-    @Size(max = 256, message = "How to get length should be lower than 256 characters")
+    @Column(name = "how_to_get")
     private String howToGet;
-    @Size(max = 256, message = "Address length should be lower than 256 characters")
+    @Column(name = "address")
     private String address;
-    @NotNull(message = "Rating can not be empty")
-    private double rating;
-    private List<Double> rates;
-    @NotNull(message = "Location cannot be empty")
-    private Point location;
+    @Column(name = "rating")
+    @ColumnDefault("0")
+    private Double rating;
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private Status status;
-    private Set<String> tags;
-    private List<Attachment> attachments;
-    private List<Comment> comments;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    // Relations
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", referencedColumnName = "id")
+    private User creator;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<PlaceTag> tags;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<PlaceRating> placeRates;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    private Set<PlaceAttachment> attachments;
 }

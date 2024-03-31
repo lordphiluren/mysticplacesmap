@@ -3,7 +3,6 @@ package com.sushchenko.mystictourismapp.web.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.sushchenko.mystictourismapp.entity.Attachment;
 import lombok.*;
 
 @Getter
@@ -19,5 +18,5 @@ public class UserResponse {
     private String name;
     private String lastName;
     private String email;
-    private Attachment profilePicture;
+    private String profilePicture;
 }

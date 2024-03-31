@@ -35,19 +35,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/v1/**")
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/places").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/places/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/places/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/places/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/users/**").authenticated()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/places").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/places/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/places/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/places/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/places/*/comments").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .anyRequest().permitAll()
-                )
-                .logout(l -> l.logoutUrl("/logout")
-                        .logoutSuccessUrl("/").permitAll()
                 );
 
         return http.build();
@@ -55,8 +53,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5500", "http://127.0.0.1:5500"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

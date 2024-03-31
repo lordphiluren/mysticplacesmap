@@ -1,0 +1,45 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="v1-1" author="Sushchenko Artyom">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='place'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='place'>
+            <column name="id" type="bigint" autoIncrement="true" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false"  />
+            </column>
+            <column name="name" type="varchar(128)">
+                <constraints nullable="false" />
+            </column>
+            <column name="short_description" type="varchar" />
+            <column name="full_description" type="varchar" />
+            <column name="how_to_get" type="varchar" />
+            <column name="address" type="varchar" />
+            <column name="rating" type="double" defaultValue="0"/>
+            <column name="latitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar" />
+            <column name="created_at" type="timestamp" />
+            <column name="creator_id" type="bigint" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="place" baseColumnNames="creator_id" constraintName="fk_place_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,15 +1,15 @@
 package com.sushchenko.mystictourismapp.web.controller;
 
-import com.mongodb.MongoWriteException;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
 import com.sushchenko.mystictourismapp.service.AuthService;
-import com.sushchenko.mystictourismapp.service.UserService;
 import com.sushchenko.mystictourismapp.utils.exception.ControllerErrorResponse;
-import com.sushchenko.mystictourismapp.utils.exception.UserAlreadyExistException;
 import com.sushchenko.mystictourismapp.web.dto.AuthRequest;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
+import com.sushchenko.mystictourismapp.web.dto.ResponseMessage;
 import com.sushchenko.mystictourismapp.web.dto.UserResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,45 +25,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authorization", description = "Controller for user authorization and authentication using JWT")
 public class AuthController {
     private final AuthService authService;
     private final ModelMapper modelMapper;
+    @Operation(
+            summary = "User login",
+            description = "Handles user authentication"
+    )
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody AuthRequest authRequest) {
         return authService.attemptLogin(authRequest.getUsername(), authRequest.getPassword());
     }
+    @Operation(
+            summary = "User signup",
+            description = "Handles user registration"
+    )
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody AuthRequest authRequest) {
         authService.signUp(modelMapper.map(authRequest, User.class));
-        return ResponseEntity.ok("Successful registration");
-    }
-    @GetMapping("/me")
-    public UserResponse getAuthUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return modelMapper.map(userPrincipal.getUser(), UserResponse.class);
-    }
-
-//     Exception Handling
-    @ExceptionHandler
-    private ResponseEntity<ControllerErrorResponse> handleException(RuntimeException e) {
-        ControllerErrorResponse errorResponse = new ControllerErrorResponse(e.getMessage(),
-                System.currentTimeMillis());
-        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
-        HttpStatus httpStatus = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
-    // validation exception handler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+        return ResponseEntity.ok(new ResponseMessage("Successful registration"));
     }
 }

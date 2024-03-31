@@ -1,15 +1,14 @@
 package com.sushchenko.mystictourismapp.service;
 
-import com.mongodb.MongoWriteException;
-import com.mongodb.WriteError;
 import com.sushchenko.mystictourismapp.entity.User;
 import com.sushchenko.mystictourismapp.entity.enums.Role;
 import com.sushchenko.mystictourismapp.repo.UserRepo;
 import com.sushchenko.mystictourismapp.security.JwtIssuer;
 import com.sushchenko.mystictourismapp.security.UserPrincipal;
-import com.sushchenko.mystictourismapp.utils.exception.UserAlreadyExistException;
+import com.sushchenko.mystictourismapp.utils.mapper.UserMapper;
 import com.sushchenko.mystictourismapp.web.dto.AuthResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +26,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepo userRepo;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final UserMapper userMapper;
     public AuthResponse attemptLogin(String username, String password) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
@@ -36,6 +36,7 @@ public class AuthService {
         String token = jwtIssuer.issue(principal);
         return AuthResponse.builder()
                 .token(token)
+                .user(userMapper.toDto(principal.getUser()))
                 .build();
     }
     @Transactional

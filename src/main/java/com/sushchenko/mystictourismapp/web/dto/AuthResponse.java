@@ -16,4 +16,5 @@ import lombok.Setter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AuthResponse {
     private String token;
+    private UserResponse user;
 }
