@@ -19,6 +19,10 @@ spring:
           batch_size: 8
   liquibase:
     change-log: db/changelog/main-changelog.xml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 security:
   jwt:
     secret-key: veryLongAndVerySecretKeyNoBodyWillEverGuessItBecauseItIsUnbelievablySecretOhMyLordSomeOneTryToGuessIt
