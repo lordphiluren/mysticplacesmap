@@ -51,7 +51,7 @@ public class PlacesController {
             summary = "Add place"
     )
     @SecurityRequirement(name = "JWT")
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPlace(@Valid @RequestPart(value = "place", required = false) PlaceRequest placeDto,
                                       @RequestPart(value = "attachments", required = false) MultipartFile[] attachments,
                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
@@ -127,7 +127,7 @@ public class PlacesController {
             summary = "Add attachments to existing place"
     )
     @SecurityRequirement(name = "JWT")
-    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @RequestMapping(path = "/{id}/attachments", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addPlaceAttachments(@PathVariable Long id,
                                                  @RequestPart("attachments") MultipartFile[] attachments) {
         return ResponseEntity.ok(placeMapper.toDto(placeService.addPlaceAttachments(id, attachments)));
