@@ -66,11 +66,11 @@ public class PlaceService {
     public void deletePlace(Long id, User creator) {
         Place place = getById(id);
         if(Helper.checkUserPermissions(place.getCreator(), creator)) {
-            placeRepo.deleteById(id);
+            placeRepo.delete(place);
         } else {
-            throw new NotEnoughPermissionsException("User with id:" + creator.getId() +
-                    " is not allowed to modify this place");
+            throw new NotEnoughPermissionsException("User is not allowed to delete place");
         }
+
     }
     @Transactional
     public Place updatePlace(Long id, PlaceRequest placeDto, User creator) {

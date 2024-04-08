@@ -42,6 +42,6 @@ public class Comment {
     @JoinColumn(name = "place_id", referencedColumnName = "id")
     private Place place;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
     private Set<CommentAttachment> attachments;
 }

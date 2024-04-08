@@ -65,15 +65,15 @@ public class Place {
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place", cascade = CascadeType.ALL)
     private Set<PlaceTag> tags;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place", cascade = CascadeType.ALL)
     private Set<PlaceRating> placeRates;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place", cascade = CascadeType.ALL)
     private Set<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "place", cascade = CascadeType.ALL)
     private Set<PlaceAttachment> attachments;
 }

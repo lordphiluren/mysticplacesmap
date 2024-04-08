@@ -35,12 +35,12 @@ public class User {
     private String profilePicture;
 
     // Relations
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Place> places;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator", cascade = CascadeType.ALL)
     private List<PlaceRating> placeRatings;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Comment> comments;
 }
